@@ -1,0 +1,12 @@
+*.zip
+*.props
+*.vcxproj
+*vcxproj.filters
+*.vcxproj.user
+*.gif
+*.obj
+*.log*
+*.tlog*
+*.ilk
+*.idb
+*.pdb
