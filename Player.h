@@ -9,10 +9,16 @@ public:
 	
 	void jumpControl(float);
 	void movement();
-	static Player& getInstance();
-	sf::Sprite* getSprite() { return sprite; }
+	
+	float getHP(){
+		return m_HP;
+	}
+	
 	void update(float, sf::RenderTarget*);
+	
 private:
+	
+	
 	void loadAnimations();
 	//enum action { RUN, JUMP, IDLE };
 	//int currentAction=2;

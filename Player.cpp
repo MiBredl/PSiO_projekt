@@ -10,8 +10,8 @@ Player::Player(GameManager* _gameManager) :playerSpeed(.1f)
 	//
 	m_GameManager = _gameManager;
 	sprite = new sf::Sprite;
-
-	
+	this->m_HP = 3;
+	m_TotalTime = 0.4;
 	loadAnimations();
 	setAnimation("IDLE");
 
@@ -58,7 +58,7 @@ void Player::jumpControl(float deltaTime)
 		m_IsFalling = true;
 	
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)&&!isDead) {
 		if (!m_IsJumping && !m_IsFalling) {
 			m_IsJumping = true;
 			m_JumpVelocity = JUMP_VELOCITY;
@@ -72,67 +72,77 @@ void Player::jumpControl(float deltaTime)
 void Player::movement()
 {
 	direction = { 0,0 };
-
-	
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-	//	direction.y = -1;
-	//	//setAnimation("JUMP");
-	//}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		direction.y = 1;
-
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		direction.x = -1;
-		sprite->setOrigin(sprite->getGlobalBounds().width/2,0.f);
-		sprite->setScale(-2,2);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		direction.x = 1;
-		sprite->setOrigin(0.f, 0.f);
-		sprite->setScale(2, 2);
-	}
-	if (direction == sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		setAnimation("IDLE");
-	}
-	else if (direction != sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-	setAnimation("RUN"); 
-	sprite->move(direction.x * playerSpeed, direction.y * playerSpeed);
-}
-
-	
-	
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&&!m_IsFalling&&!m_IsJumping) {
-		setAnimation("ATTACK");
-		AttackAnimation* attackAnimation= dynamic_cast<AttackAnimation*>(getAnimation());
+	auto _enemyBounds = m_GameManager->getEnemy()->getSprite()->getGlobalBounds();
+	Enemy* _enemy = m_GameManager->getEnemy();
+	if (!isDead) {
 		
-		for(const int frame : attackAnimation->getHitboxes()){
-			if (frame == attackAnimation->getCurrentFrame()) {
-				/*std::cout << "HIIIIIIIIIIIIIT" << std::endl;
-				std::cout <<"frame "<<frame << std::endl;*/
 
-				break;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			direction.y = 1;
+
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			direction.x = -1;
+			sprite->setOrigin(sprite->getGlobalBounds().width / 2, 0.f);
+			sprite->setScale(-2, 2);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			direction.x = 1;
+			sprite->setOrigin(0.f, 0.f);
+			sprite->setScale(2, 2);
+		}
+		if (direction == sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			setAnimation("IDLE");
+		}
+		else if (direction != sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			setAnimation("RUN");
+			sprite->move(direction.x * playerSpeed, direction.y * playerSpeed);
+		}
+
+
+
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !m_IsFalling && !m_IsJumping) {
+
+			setAnimation("ATTACK");
+			if (sprite->getGlobalBounds().intersects(_enemyBounds)) {
+				AttackAnimation* attackAnimation = dynamic_cast<AttackAnimation*>(getAnimation());
+				if (attackAnimation != nullptr) {
+					for (const int frame : attackAnimation->getHitboxes()) {
+						if (frame == attackAnimation->getCurrentFrame()) {
+							_enemy->damageManager(1);
+
+							break;
+						}
+					}
+				}
 			}
 		}
+		if (m_IsFalling) {
+			setAnimation("FALL");
+		}
+		else if (m_IsJumping) {
+			setAnimation("JUMP");
+		}
 	}
-	if (m_IsFalling) {
-		setAnimation("FALL");
+	else {
+		if (m_CurrentAnimation->getCurrentFrame() != 9) {
+			setAnimation("DEATH");
+		}
+		else m_CurrentAnimation->pause();
 	}
-	else if (m_IsJumping ) {
-		setAnimation("JUMP");
-	}
-	 
 }
+
+
 
 void Player::loadAnimations()
 {
 	addAnimation( new Animation("RUN","textures/player/Colour1/NoOutline/120x80_PNGSheets/Run3.png", { 32,38 }, 10));
-	addAnimation( new Animation("DEATH","textures/player/Colour1/NoOutline/120x80_PNGSheets/_Death.png", { 120,37 }, 10));
+	addAnimation( new Animation("DEATH","textures/player/Colour1/NoOutline/120x80_PNGSheets/Death3.png", { 120,39 }, 10));
 	addAnimation( new Animation("IDLE","textures/player/Colour1/NoOutline/120x80_PNGSheets/Idle3.png", { 19,37 }, 10));
 	addAnimation( new Animation("JUMP","textures/player/Colour1/NoOutline/120x80_PNGSheets/Jump3.png", { 23,37 }, 3));
 	addAnimation( new Animation("FALL","textures/player/Colour1/NoOutline/120x80_PNGSheets/Fall3.png", { 27,37 }, 3));
-	addAnimation( (new AttackAnimation("ATTACK","textures/player/Colour1/NoOutline/120x80_PNGSheets/_AttackCombo.png", { 120,37 }, 10))->addHitbox({ 1,2,6,7 }));
+	addAnimation( (new AttackAnimation("ATTACK","textures/player/Colour1/NoOutline/120x80_PNGSheets/Attack3.png", { 71,42 }, 4))->addHitbox({ 2,3 }));
 }
 
 

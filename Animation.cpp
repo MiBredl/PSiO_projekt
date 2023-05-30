@@ -30,3 +30,11 @@ void Animation::reload()
 {
 	m_iCurrentFrame = 0;
 }
+
+void Animation::pause()
+{
+	m_iTotalTime = 0;
+	m_iCurrentFrame = m_iFramesCount - 1;
+}
+
+

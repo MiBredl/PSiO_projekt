@@ -3,7 +3,6 @@
 
 
 
-
 void NPC::render(sf::RenderTarget* window,float deltaTime)
 {
 
@@ -37,5 +36,13 @@ void NPC::addAnimation( Animation* _animation)
 	this->m_Animations.insert(std::pair<std::string, Animation*>(_animation->getName(), _animation));
 
 
+}
+
+void NPC::damageManager(float damage)
+{
+	m_HP -= damage;
+	if (m_HP <= 0) {
+		isDead = true;
+	}
 }
 

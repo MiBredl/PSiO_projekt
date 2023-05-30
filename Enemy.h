@@ -12,6 +12,8 @@ public:
 	
 private:
 	
+	
+	
 	std::string m_Path = "textures/Monsters_Creatures_Fantasy/";
 	std::string m_EnemyType[4] = {"Flying eye","Skeleton","Mushroom","Goblin"};
 };

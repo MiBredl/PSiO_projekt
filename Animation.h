@@ -19,12 +19,15 @@ public:
 	std::string getName() {
 		return name;
 	}
-
+	int getFrameCount() {
+		return m_iFramesCount;
+	}
 	void render(float);
 	void reload();
 	int getCurrentFrame() {
 		return m_iCurrentFrame;
 	}
+	void pause();
 private:
 	const float m_iswitchTime = 0.045f;
 	sf::Texture* texture;
