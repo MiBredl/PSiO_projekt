@@ -15,10 +15,19 @@ void Ambient::loadTextures()
 	addTextures(new Textures("FenceMiddle", imagePath + "objects.png", { 640,188,32,31 }));
 	addTextures(new Textures("FenceRight", imagePath + "objects.png", { 688,188,41,30 }));
 	//Background
-	addTextures(new Textures("FloorBlack", imagePath + "objects.png", { 875,78,40,40 }));
+	addTextures(new Textures("FloorBlack", imagePath + "objects.png", { 866,215,40,40 }));
 
 }
 
-Ambient::Ambient(GameManager*, string, Vector2f, Vector2f)
+Ambient::Ambient(GameManager* _gameMeneger, string _textname, Vector2f startingpos, Vector2f scale)
 {
+	m_GameManager = _gameMeneger;
+	sprite = new Sprite;
+
+	loadTextures();
+	setTextures(_textname);
+
+
+	sprite->setScale(scale);
+	sprite->setPosition(startingpos);
 }
