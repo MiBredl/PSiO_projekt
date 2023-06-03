@@ -11,16 +11,19 @@ protected:
 	sf::Sprite* sprite;
 	std::map<std::string, Animation*> m_Animations;
 	sf::Clock clock;
-	sf::Vector2i direction = { 0,0 };	float m_HP;
+	sf::Vector2i direction = { 0,0 };	
+	float m_HP;
 	float m_TotalTime;
 	bool isFirstAttack = true;
 	bool isAttacking = false;
+	bool isHit = false;
+	int m_AnimationTime,iFrameTime;
 public:
 
 	
 
 	bool isDead = false;
-	virtual void movement() = 0;
+	virtual void movement(float) = 0;
 	virtual void update(float, sf::RenderTarget*) = 0;
 
 

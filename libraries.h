@@ -3,5 +3,11 @@
 #include<vector>
 #include<map>
 #include<algorithm>
-const int WINDOW_WIDTH = 1000;
-const int WINDOW_HEIGHT = 1000;
+#include<iostream>
+using namespace std;
+using namespace sf;
+namespace GAME_ENUMS {
+	enum GAMESTATE{ PLAYING, RESTART, PAUSED, DEAD };
+}
+const int WINDOW_WIDTH =1920;
+const int WINDOW_HEIGHT = 1080;

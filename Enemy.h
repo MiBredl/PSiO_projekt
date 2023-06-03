@@ -6,7 +6,7 @@ class Enemy :public NPC
 {
 public:
 	Enemy(int,GameManager*);
-	void movement();
+	void movement(float);
 	void update(float,sf::RenderTarget*);
 	//void jumpControl(float) override;
 	

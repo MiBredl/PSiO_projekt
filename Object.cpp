@@ -1,5 +1,5 @@
 #include "Object.h"
-#include <iostream>
+
 void Object::renderPlat(RenderWindow* window)
 {
 	this->sprite->setTextureRect(current_Texture->getRect());

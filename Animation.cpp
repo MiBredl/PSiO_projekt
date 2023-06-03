@@ -1,5 +1,5 @@
 #include "Animation.h"
-#include<iostream>
+
 Animation::Animation(std::string _name,std::string _filename, sf::Vector2i _frameSize, int _frameCount = 1)
 	:frameSize(_frameSize),
 	m_iCurrentFrame(0),

@@ -1,5 +1,5 @@
-#include"libraries.h"
 #pragma once
+#include"libraries.h"
 
 class Textures
 {

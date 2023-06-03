@@ -29,13 +29,12 @@ public:
 	}
 	void pause();
 private:
-	const float m_iswitchTime = 0.045f;
+	const float m_iswitchTime = 0.07f;
 	sf::Texture* texture;
 	std::string name;
 	float m_iTotalTime;
 	int m_iFramesCount,
-		m_iCurrentFrame
-		;
+		m_iCurrentFrame;
 	
 	sf::Vector2i frameSize;
 };
