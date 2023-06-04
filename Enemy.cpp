@@ -1,11 +1,12 @@
 #include "Enemy.h"
 #include "GameManager.h"
 
+
 #include<iostream>
 
 
 
-Enemy::Enemy(int type, GameManager* _gameManager)
+Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos)
 {
 	iFrameTime = 0;
 	m_AnimationTime = 0;
@@ -17,19 +18,30 @@ Enemy::Enemy(int type, GameManager* _gameManager)
 	addAnimation(new Animation("MOVE", m_Path+m_EnemyType[type]+"/Run.png", {150,150}, 4 ));
 	addAnimation(new Animation("IDLE", m_Path+m_EnemyType[type]+"/Idle.png", {150,150}, 4 ));
 	addAnimation(new Animation("DEATH", m_Path+m_EnemyType[type]+"/Death.png", {150,150}, 4 ));
-	
+	/*addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack.png", { 150,150 }, 8))->addHitbox({ 6,7 }));
+	addAnimation(new Animation("MOVE", m_Path + m_EnemyType[type] + "/Run3.png", { 40,40 }, 4));
+	addAnimation(new Animation("IDLE", m_Path + m_EnemyType[type] + "/Idle4.png", { 40,40 }, 4));
+	addAnimation(new Animation("DEATH", m_Path + m_EnemyType[type] + "/Death.png", { 150,150 }, 4));*/
 
 	setAnimation("MOVE");
 
 	sprite->setScale(1.5, 1.5);
-	sprite->setPosition(200, 800);
-	
+	sprite->setPosition(_startpos);
+	platforms = m_GameManager->getPlatforms();
 }
 
 void Enemy::movement(float _deltaTime)
 {
+	
+
+
+
+	////////////
 	if (!isDead) {
+		
 		sf::Sprite* _PlayerSprite = m_GameManager->getPlayer()->getSprite();
+		
+		
 		if (!m_GameManager->getPlayer()->isDead) {
 			if (_PlayerSprite->getGlobalBounds().top >= this->sprite->getGlobalBounds().top 
 				&& _PlayerSprite->getGlobalBounds().top <= this->sprite->getGlobalBounds().top + this->sprite->getGlobalBounds().height) {
@@ -60,13 +72,17 @@ void Enemy::movement(float _deltaTime)
 							break;
 						}
 				}
-				if (direction.x != 0) setAnimation("MOVE");
+				else { 
+					if (direction.x != 0) setAnimation("MOVE");
+					else setAnimation("IDLE");
+				}
 			}
-			else direction = { 0,0 };
+			else direction.x = 0;
 			if (m_CurrentAnimation->getName() != "ATTACK" && direction.x == 0.f) setAnimation("IDLE");
-			this->sprite->move(direction.x * .07f, 0);
+			
 		}
 		else setAnimation("IDLE");
+		this->sprite->move(direction.x * .7f,0 );
 	}
 	else {
 		if (m_CurrentAnimation->getCurrentFrame() != m_CurrentAnimation->getFrameCount()-1) {
@@ -74,12 +90,72 @@ void Enemy::movement(float _deltaTime)
 		}
 		else m_CurrentAnimation->pause();
 	}
+	cout << direction.y << "ENEMY DIR" << endl;
 }
 
 void Enemy::update(float deltaTime, sf::RenderTarget* window)
 {
 	movement(deltaTime);
+	fallControll(deltaTime);
+
+}
+
+void Enemy::fallControll(float _deltaTime)
+{
+	platforms = m_GameManager->getPlatforms();
+	float _displacement = m_JumpVelocity * _deltaTime + 0.5f * GRAVITY * _deltaTime * _deltaTime;
+	//m_isOnGround = false;
+	FloatRect _EnemyBounds = sprite->getGlobalBounds();
+
+
+
+	if (m_IsFalling) {
+		m_isOnPlatform = false;
+		if (_displacement > 0) m_IsFalling = true;
+		m_JumpVelocity += GRAVITY * _deltaTime;
+		//std::cout << _displacement << std::endl;
+
+		sprite->move(0.f, _displacement);
+
+		if (_displacement < 0.f && ( m_isOnPlatform)) m_JumpVelocity = 0.f;
+
+	}
+
 	
+	
+	if (!m_isOnPlatform  && _displacement > 0.f) {
+		m_IsFalling = true;
+
+	}
+	for (auto& platform : platforms) {
+		FloatRect _PlatformHitbox = platform->getGlobalBounds();
+
+		if (_EnemyBounds.intersects(_PlatformHitbox)) {
+
+			if (_EnemyBounds.top + _EnemyBounds.height >= _PlatformHitbox.top
+				&& _EnemyBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
+				m_isOnPlatform = true;
+				m_IsFalling = false;
+
+				//cout << "top" << endl;
+				m_JumpVelocity = 0.f;
+
+			}
+			if (_EnemyBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
+				if (!m_isOnPlatform) {
+					//cout << "bottom" << endl;
+					m_IsFalling = true;
+					m_JumpVelocity = -JUMP_VELOCITY / 70;
+				}
+			}
+			if ((_EnemyBounds.left <= _PlatformHitbox.left + _PlatformHitbox.width + 20
+				&& _EnemyBounds.left + _EnemyBounds.width >= _PlatformHitbox.left - 20)) {
+				cout << "side" << endl;
+				m_SideCollision = true;
+			}
+		}
+
+	}
 
 }
 

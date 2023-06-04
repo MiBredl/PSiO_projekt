@@ -2,13 +2,21 @@
 #include "Object.h"
 #include "Textures.h"
 #include "libraries.h"
-class Ambient:public Object
+//#include "GameManager.h"
+#include <iostream>
+class Ambient :public Object
 {
 private:
 	string imagePath = "textures/Map/world/";
 	void  loadTextures();
-public:
-	Ambient(GameManager*, string, Vector2f, Vector2f);
-};
+	float speed;
+	float posY;
 
+
+public:
+	void updateParalax();
+	void updateAmbients();
+	Ambient(GameManager*, string, Vector2f, Vector2f);
+	Ambient(GameManager*, string, Vector2f, Vector2f, float);
+};
 

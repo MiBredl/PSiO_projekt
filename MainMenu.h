@@ -14,6 +14,7 @@ public:
 	//	cout << "OVER\n";
 		m_CurrentOption = _option;
 	}
+	void viewUpdate();
 	MainMenu(GameManager&);
 	~MainMenu() {};
 	void handleInput();

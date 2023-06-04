@@ -34,7 +34,7 @@ void NPC::setAnimation(std::string _mapKey)
 	this->m_CurrentAnimation->reload();
 	this->sprite->setTexture(*this->m_CurrentAnimation->getTexture());
 	
-
+	
 }
 
 void NPC::addAnimation( Animation* _animation)

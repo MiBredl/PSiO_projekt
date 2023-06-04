@@ -19,15 +19,26 @@ Player::Player(GameManager* _gameManager) : playerSpeed(5){
 
 	sprite->setScale(2.5, 2.5);
 	
-	sprite->setPosition(300, 0);
+	sprite->setPosition(400, 0);
 
 
 	for (int i = 0; i < m_HP; i++) {
-		m_HealthPoints.push_back(new HealthBar({25.f*i,0}));
+		sf::Vector2i pixelPos(i * 25, 0);
+		sf::Vector2f worldPos = m_GameManager->getWindow()->mapPixelToCoords(pixelPos);
+		m_HealthPoints.push_back(new HealthBar(worldPos));
 	}
 	
 }
+void Player::viewupdate()
+{
+	m_HealthPoints.clear();
 
+	for (int i = 0; i < m_HP; i++) {
+		sf::Vector2i pixelPos(i * 25, 0);
+		sf::Vector2f worldPos = m_GameManager->getWindow()->mapPixelToCoords(pixelPos);
+		m_HealthPoints.push_back(new HealthBar(worldPos));
+	}
+}
 
 
 void Player::jumpControl(float deltaTime)
@@ -82,6 +93,7 @@ void Player::jumpControl(float deltaTime)
 					m_IsJumping = false;
 					//cout << "top" << endl;
 					m_JumpVelocity = 0.f;
+					
 				}
 				 if (_PlayerHitbox.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
 					if (!m_isOnPlatform) { 
@@ -90,14 +102,13 @@ void Player::jumpControl(float deltaTime)
 					m_JumpVelocity = -JUMP_VELOCITY/70;
 					}
 				 }
+				 if ((_PlayerHitbox.left <= _PlatformHitbox.left + _PlatformHitbox.width + 20
+						 && _PlayerHitbox.left + _PlayerHitbox.width >= _PlatformHitbox.left - 20)) {
+					 cout << "side" << endl;
+					 m_SideCollision = true;
+				 }
 		}
-			if ((_PlayerHitbox.top >= _PlatformHitbox.top
-			&& _PlayerHitbox.top + _PlayerHitbox.height <= _PlatformHitbox.top + _PlatformHitbox.height)
-			&& (_PlayerHitbox.left <= _PlatformHitbox.left + _PlatformHitbox.width + 20
-				&& _PlayerHitbox.left + _PlayerHitbox.width >= _PlatformHitbox.left - 20)) {
-			cout << "side" << endl;
-			m_SideCollision = true;
-			}
+			
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)&&!isDead&&(!m_IsFalling||!m_IsJumping)) {
 		if (!m_IsJumping && !m_IsFalling) {
@@ -116,8 +127,8 @@ void Player::jumpControl(float deltaTime)
 void Player::movement(float _deltaTime)
 {
 	direction = { 0,0 };
-	auto _enemyBounds = m_GameManager->getEnemy()->getSprite()->getGlobalBounds();
-	Enemy* _enemy = m_GameManager->getEnemy();
+
+	
 	if (!isDead) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			direction.y = 1;
@@ -141,7 +152,7 @@ void Player::movement(float _deltaTime)
 		}
 		else if (direction != sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			setAnimation("RUN");
-			sprite->move(direction.x * playerSpeed, direction.y * playerSpeed);
+			sprite->move(direction.x * playerSpeed, 0);
 		}
 
 
@@ -149,19 +160,21 @@ void Player::movement(float _deltaTime)
 				if (!m_AnimationTime) {
 					m_AnimationTime = _deltaTime;
 					setAnimation("ATTACK");
-					if (sprite->getGlobalBounds().intersects(_enemyBounds)) {
+					for (auto& enemy : m_GameManager->getEnemies()) {
+						if (sprite->getGlobalBounds().intersects(enemy->getSprite()->getGlobalBounds())) {
 
-						AttackAnimation* attackAnimation = dynamic_cast<AttackAnimation*>(getAnimation());
-						if (attackAnimation != nullptr) {
-							std::cout <<  attackAnimation->getHitboxes().size() << std::endl;
-							for (int frame : attackAnimation->getHitboxes()) {
-								std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
-								if (frame == attackAnimation->getCurrentFrame()) {
-									_enemy->damageManager(1);
-									
-									break;
+							AttackAnimation* attackAnimation = dynamic_cast<AttackAnimation*>(getAnimation());
+							if (attackAnimation != nullptr) {
+								std::cout << attackAnimation->getHitboxes().size() << std::endl;
+								for (int frame : attackAnimation->getHitboxes()) {
+									std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
+									if (frame == attackAnimation->getCurrentFrame()) {
+										enemy->damageManager(1);
+
+										break;
+									}
+
 								}
-
 							}
 						}
 					}
@@ -209,6 +222,7 @@ void Player::loadAnimations()
 void Player::update(float deltaTime, sf::RenderTarget* window)
 {
 	//PlatformDetection();
+	viewupdate();
 	HealthBarManager();
 	jumpControl(deltaTime);
 	movement(deltaTime);

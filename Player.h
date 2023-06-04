@@ -8,6 +8,7 @@ class Player : public NPC
 public:
 	Player(GameManager*);
 	
+	void viewupdate();
 	void jumpControl(float);
 	void movement(float);
 	
@@ -23,16 +24,11 @@ private:
 	vector<HealthBar*> m_HealthPoints;
 	vector<Platform*> platforms;
 	void loadAnimations();
-	bool m_isOnGround=false;
-	bool m_isOnPlatform=false;
-	bool m_SideCollision = false;
-	bool hit = false;
 	
-	bool m_IsFalling=false;
 	bool m_IsJumping = false;
-	float m_JumpVelocity=1;
+	
 	float playerSpeed;
-	const float GRAVITY = 300.f;
-	const float JUMP_VELOCITY=-350;
+	
+	
 };
 
