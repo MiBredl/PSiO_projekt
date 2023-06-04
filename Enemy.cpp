@@ -14,14 +14,14 @@ Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos)
 	m_TotalTime = 0.4;
 	m_HP = 1;
 	sprite = new sf::Sprite;
-	addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack.png", { 150,150 }, 8))->addHitbox({6,7}));
+	/*addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack.png", { 150,150 }, 8))->addHitbox({6,7}));
 	addAnimation(new Animation("MOVE", m_Path+m_EnemyType[type]+"/Run.png", {150,150}, 4 ));
 	addAnimation(new Animation("IDLE", m_Path+m_EnemyType[type]+"/Idle.png", {150,150}, 4 ));
-	addAnimation(new Animation("DEATH", m_Path+m_EnemyType[type]+"/Death.png", {150,150}, 4 ));
-	/*addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack.png", { 150,150 }, 8))->addHitbox({ 6,7 }));
+	addAnimation(new Animation("DEATH", m_Path+m_EnemyType[type]+"/Death.png", {150,150}, 4 ));*/
+	addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack.png", { 150,150 }, 8))->addHitbox({ 6,7 }));
 	addAnimation(new Animation("MOVE", m_Path + m_EnemyType[type] + "/Run3.png", { 40,40 }, 4));
 	addAnimation(new Animation("IDLE", m_Path + m_EnemyType[type] + "/Idle4.png", { 40,40 }, 4));
-	addAnimation(new Animation("DEATH", m_Path + m_EnemyType[type] + "/Death.png", { 150,150 }, 4));*/
+	addAnimation(new Animation("DEATH", m_Path + m_EnemyType[type] + "/Death.png", { 150,150 }, 4));
 
 	setAnimation("MOVE");
 
@@ -154,7 +154,7 @@ void Enemy::fallControll(float _deltaTime)
 				m_SideCollision = true;
 			}
 		}
-
+		else m_isOnPlatform = false;
 	}
 
 }
