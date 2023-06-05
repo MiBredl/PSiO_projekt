@@ -170,7 +170,6 @@ void Player::movement(float _deltaTime)
 									std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
 									if (frame == attackAnimation->getCurrentFrame()) {
 										enemy->damageManager(1);
-
 										break;
 									}
 

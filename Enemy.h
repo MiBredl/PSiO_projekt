@@ -11,11 +11,13 @@ public:
 	void update(float,sf::RenderTarget*);
 	//void jumpControl(float) override;
 	void fallControll(float);
+	
 private:
-	
-	
+	int type;
+	void loadAnimations();
 	vector<Platform*> platforms;
 	std::string m_Path = "textures/Monsters_Creatures_Fantasy/";
 	std::string m_EnemyType[4] = {"Flying eye","Skeleton","Mushroom","Goblin"};
+	
 };
 
