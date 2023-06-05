@@ -51,7 +51,7 @@ void NPC::damageManager(float damage)
 	isHit = false;
 	if (!iFrameTime) {
 		
-		iFrameTime = 50;
+		iFrameTime = 45;
 		
 		m_HP -= damage;
 		isHit = true;

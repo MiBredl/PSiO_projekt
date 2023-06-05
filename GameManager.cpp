@@ -6,11 +6,12 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 
 	m_Window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT),"SUS SOULS");
 	m_Window->setFramerateLimit(60);
-	
-	InitializeGame();
-
 	view.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	
 
+	
+	loadWorld1();
+	InitializeGame();
 	
 	m_MainMenu = new MainMenu(*this);
 	update();
@@ -19,7 +20,7 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 void GameManager::update()
 {
 
-	loadWorld1();
+	
 	while (m_Window->isOpen()) {
 		eventManager();
 		view.setCenter(m_Player->getSprite()->getPosition().x, WINDOW_HEIGHT / 2);
@@ -168,7 +169,7 @@ void GameManager::loadWorld1()
 {
 	worldGenP(0, platforms, world1);
 	worldGenA(0, f_ambients, b_ambients, close_background, world1);
-	worldGenE(0, enemies, world1);
+	
 	far_background.push_back(new Ambient(this, "Sky", { 0,440 }, { 10,5.25 }, 1));
 	far_background.push_back(new Ambient(this, "MoutainsFar", { 0,440 }, { 6,5.25 }, 0.9));
 	far_background.push_back(new Ambient(this, "MoutainsClose", { 0,440 }, { 6,5.25 }, 0.8));

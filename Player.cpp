@@ -68,6 +68,8 @@ void Player::jumpControl(float deltaTime)
 			m_IsFalling = false;
 			m_IsJumping = false;
 			m_isOnGround = true;
+			m_HP = 0;
+			isDead = true;
 		}
 		
 
@@ -93,6 +95,7 @@ void Player::jumpControl(float deltaTime)
 					m_IsJumping = false;
 					//cout << "top" << endl;
 					m_JumpVelocity = 0.f;
+					
 					
 				}
 				 if (_PlayerHitbox.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
