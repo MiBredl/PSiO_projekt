@@ -3,6 +3,9 @@
 class GameManager;
 class Menu
 {
+protected:
+	int m_CurrentOption = 0;
+	int m_ChosenOption = 0;
 public:
 	Menu() {};
 	virtual void viewUpdate() = 0;

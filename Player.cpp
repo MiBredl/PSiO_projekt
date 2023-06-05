@@ -1,16 +1,17 @@
 
 #include "Player.h"
-#include "Healthbar.h"
+
 #include "GameManager.h"
 
 
-Player::Player(GameManager* _gameManager) : playerSpeed(5){
+Player::Player(GameManager* _gameManager) : playerSpeed(5)
+{
 
 	
 	iFrameTime = 0;
 	m_AnimationTime = 0;
 	m_GameManager = _gameManager;
-	
+	m_outputDamage = 1;
 	sprite = new sf::Sprite;
 	this->m_HP = 3;
 	m_TotalTime = 0.4;
@@ -172,7 +173,7 @@ void Player::movement(float _deltaTime)
 								for (int frame : attackAnimation->getHitboxes()) {
 									std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
 									if (frame == attackAnimation->getCurrentFrame()) {
-										enemy->damageManager(1);
+										enemy->damageManager(m_outputDamage);
 										break;
 									}
 
@@ -202,9 +203,18 @@ void Player::movement(float _deltaTime)
 
 
 
-void Player::collider()
-{
 
+
+void Player::experienceUpdate()
+{
+	vector<Enemy*> _enemies = m_GameManager->getEnemies();
+	for (auto& enemy : _enemies) {
+		if (enemy->isDead && !enemy->gaveExp) {
+			m_Exp++;
+			enemy->gaveExp = true;
+		}
+	}
+	cout << "EXP: " << m_Exp << endl;
 }
 
 void Player::loadAnimations()
@@ -224,6 +234,7 @@ void Player::loadAnimations()
 void Player::update(float deltaTime, sf::RenderTarget* window)
 {
 	//PlatformDetection();
+	experienceUpdate();
 	viewupdate();
 	HealthBarManager();
 	jumpControl(deltaTime);

@@ -6,9 +6,10 @@
 
 
 
-Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos):type(type)
+Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos):type(type), gaveExp(false)
 {
 	iFrameTime = 0;
+	m_outputDamage = type;
 	m_AnimationTime = 0;
 	m_GameManager = _gameManager;
 	m_TotalTime = 0.4;
@@ -66,7 +67,7 @@ void Enemy::movement(float _deltaTime)
 					if (attackAnimation != nullptr) 
 					for (int frame : attackAnimation->getHitboxes()) 
 						if (frame == attackAnimation->getCurrentFrame()) {
-							m_GameManager->getPlayer()->damageManager(1);
+							m_GameManager->getPlayer()->damageManager(m_outputDamage);
 							break;
 						}
 				}
@@ -146,11 +147,7 @@ void Enemy::fallControll(float _deltaTime)
 					m_JumpVelocity = -JUMP_VELOCITY / 70;
 				}
 			}
-			if ((_EnemyBounds.left <= _PlatformHitbox.left + _PlatformHitbox.width + 20
-				&& _EnemyBounds.left + _EnemyBounds.width >= _PlatformHitbox.left - 20)) {
-				cout << "side" << endl;
-				m_SideCollision = true;
-			}
+		
 		}
 		else m_isOnPlatform = false;
 	}
@@ -161,19 +158,22 @@ void Enemy::loadAnimations()
 {
 	
 
-	if (type == GAME_ENUMS::ENEMY_TYPE::SKELETON) {
+	switch (type)
+	{
+
+	case GAME_ENUMS::ENEMY_TYPE::SKELETON:
 		addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack3.png", { 95,57 }, 8))->addHitbox({ 6,7 }));
 		addAnimation(new Animation("MOVE", m_Path + m_EnemyType[type] + "/Run3.png", { 45,58 }, 4));
 		addAnimation(new Animation("IDLE", m_Path + m_EnemyType[type] + "/Idle3.png", { 45,58 }, 4));
 		addAnimation(new Animation("DEATH", m_Path + m_EnemyType[type] + "/Death3.png", { 56,58 }, 4));
-	}
-	if (type == GAME_ENUMS::ENEMY_TYPE::MUSHROOM) {
+		break;
+	
+	case GAME_ENUMS::ENEMY_TYPE::MUSHROOM:
 		addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack3.png", { 64,45 }, 8))->addHitbox({ 6,7 }));
 		addAnimation(new Animation("MOVE", m_Path + m_EnemyType[type] + "/Run3.png", { 26,39 }, 8));
 		addAnimation(new Animation("IDLE", m_Path + m_EnemyType[type] + "/Idle3.png", { 23,37 }, 4));
 		addAnimation(new Animation("DEATH", m_Path + m_EnemyType[type] + "/Death3.png", { 26,37 }, 4));
-	}
-	if (type == GAME_ENUMS::ENEMY_TYPE::GOBLIN) {
+	case GAME_ENUMS::ENEMY_TYPE::GOBLIN:
 		addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack3.png", { 88,45 }, 8))->addHitbox({ 6,7 }));
 		addAnimation(new Animation("MOVE", m_Path + m_EnemyType[type] + "/Run3.png", { 38,38 }, 8));
 		addAnimation(new Animation("IDLE", m_Path + m_EnemyType[type] + "/Idle3.png", { 33,36 }, 4));

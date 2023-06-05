@@ -11,7 +11,8 @@ public:
 	void update(float,sf::RenderTarget*);
 	//void jumpControl(float) override;
 	void fallControll(float);
-	
+	bool gaveExp;
+
 private:
 	int type;
 	void loadAnimations();

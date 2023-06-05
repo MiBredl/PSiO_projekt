@@ -47,6 +47,7 @@ void MainMenu::handleInput()
 
 	
 }
+
 void MainMenu::viewUpdate()
 {
 	for (int i = 0; i < m_Options.size(); i++) {

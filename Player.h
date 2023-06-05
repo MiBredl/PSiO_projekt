@@ -3,6 +3,7 @@
 #include"NPC.h"
 #include "Platform.h"
 #include "Healthbar.h"
+#include "UpgradeMenu.h"
 class Player : public NPC
 {
 public:
@@ -17,10 +18,11 @@ public:
 	}
 	void update(float, sf::RenderTarget*);
 	void HealthBarManager();
+	
 private:
 	
 	void collider();
-	
+	void experienceUpdate();
 	vector<HealthBar*> m_HealthPoints;
 	vector<Platform*> platforms;
 	void loadAnimations();
@@ -28,7 +30,7 @@ private:
 	bool m_IsJumping = false;
 	
 	float playerSpeed;
-	
-	
+	unsigned int m_Exp;
+	friend class UpgradeMenu;
 };
 

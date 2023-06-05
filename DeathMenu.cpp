@@ -42,7 +42,7 @@ void DeathMenu::handleInput()
 void DeathMenu::render()
 {
 	viewUpdate();
-	
+	handleInput();
 	for (auto& text : texts) {
 		if (alpha <= 254) alpha++;
 		 text.setFillColor(Color(0,0,0,alpha));

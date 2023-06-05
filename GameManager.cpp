@@ -1,6 +1,7 @@
 #include "GameManager.h"
 
 
+
 GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 {
 
@@ -12,7 +13,7 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 	
 	loadWorld1();
 	InitializeGame();
-	
+	m_UpgradeMenu = new UpgradeMenu(*this);
 	m_MainMenu = new MainMenu(*this);
 	update();
 }
@@ -26,6 +27,7 @@ void GameManager::update()
 		view.setCenter(m_Player->getSprite()->getPosition().x, WINDOW_HEIGHT / 2);
 		m_Window->clear();
 		cout <<"CURRENT STATE: " << m_CurrentState << endl;
+		
 		if (m_MainMenu != nullptr ) {
 			m_MainMenu->handleInput();
 			if (m_CurrentState == GAME_ENUMS::GAMESTATE::PAUSED) { 
@@ -86,7 +88,10 @@ void GameManager::update()
 		if (m_CurrentState == GAME_ENUMS::GAMESTATE::DEAD) {
 			cout << "dziala\n";
 			m_DeathMenu->render();
-			m_DeathMenu->handleInput();
+			
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Tab)) {
+			m_UpgradeMenu->render();
 		}
 		m_Window->display();
 		

@@ -6,6 +6,7 @@
 #include"Ambient.h"
 #include"Platform.h"
 #include"DeathMenu.h"
+#include"UpgradeMenu.h"
 class Menu;
 class GameManager
 {
@@ -63,6 +64,7 @@ private:
 	View view;
 	Player* m_Player;
 	Enemy* m_Enemy;
+	UpgradeMenu* m_UpgradeMenu;
 	DeathMenu* m_DeathMenu;
 	MainMenu* m_MainMenu;
 	Platform* m_Platform;
