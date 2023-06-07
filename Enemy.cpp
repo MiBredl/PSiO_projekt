@@ -89,7 +89,7 @@ void Enemy::movement(float _deltaTime)
 		}
 		else m_CurrentAnimation->pause();
 	}
-	cout << direction.y << "ENEMY DIR" << endl;
+	//cout << direction.y << "ENEMY DIR" << endl;
 }
 
 void Enemy::update(float deltaTime, sf::RenderTarget* window)

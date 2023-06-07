@@ -7,7 +7,7 @@
 #include"Platform.h"
 #include"DeathMenu.h"
 #include"UpgradeMenu.h"
-class Menu;
+
 class GameManager
 {
 public:

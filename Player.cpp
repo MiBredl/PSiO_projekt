@@ -108,7 +108,7 @@ void Player::jumpControl(float deltaTime)
 				 }
 				 if ((_PlayerHitbox.left <= _PlatformHitbox.left + _PlatformHitbox.width + 20
 						 && _PlayerHitbox.left + _PlayerHitbox.width >= _PlatformHitbox.left - 20)) {
-					 cout << "side" << endl;
+					// cout << "side" << endl;
 					 m_SideCollision = true;
 				 }
 		}
@@ -169,9 +169,9 @@ void Player::movement(float _deltaTime)
 
 							AttackAnimation* attackAnimation = dynamic_cast<AttackAnimation*>(getAnimation());
 							if (attackAnimation != nullptr) {
-								std::cout << attackAnimation->getHitboxes().size() << std::endl;
+								//std::cout << attackAnimation->getHitboxes().size() << std::endl;
 								for (int frame : attackAnimation->getHitboxes()) {
-									std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
+									//std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
 									if (frame == attackAnimation->getCurrentFrame()) {
 										enemy->damageManager(m_outputDamage);
 										break;
@@ -198,7 +198,7 @@ void Player::movement(float _deltaTime)
 		}
 		else m_CurrentAnimation->pause();
 	}
-	cout <<"animTime" << m_AnimationTime << endl;
+	//cout <<"animTime" << m_AnimationTime << endl;
 }
 
 
@@ -214,7 +214,7 @@ void Player::experienceUpdate()
 			enemy->gaveExp = true;
 		}
 	}
-	cout << "EXP: " << m_Exp << endl;
+	//cout << "EXP: " << m_Exp << endl;
 }
 
 void Player::loadAnimations()

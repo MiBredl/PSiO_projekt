@@ -20,7 +20,7 @@ void DeathMenu::handleInput()
 {
 	sf::Vector2i _mousePos = sf::Mouse::getPosition();
 	sf::Vector2f worldMousePos = m_GameManager.getWindow()->mapPixelToCoords(_mousePos);
-	cout << "handle\n";
+	//cout << "handle\n";
 	if (texts[1].getGlobalBounds().left <= worldMousePos.x
 		&& texts[1].getGlobalBounds().left + texts[1].getGlobalBounds().width >= worldMousePos.x
 		&& texts[1].getGlobalBounds().top <= worldMousePos.y - 10

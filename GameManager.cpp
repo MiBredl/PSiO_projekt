@@ -26,7 +26,7 @@ void GameManager::update()
 		eventManager();
 		view.setCenter(m_Player->getSprite()->getPosition().x, WINDOW_HEIGHT / 2);
 		m_Window->clear();
-		cout <<"CURRENT STATE: " << m_CurrentState << endl;
+		//cout <<"CURRENT STATE: " << m_CurrentState << endl;
 		
 		if (m_MainMenu != nullptr ) {
 			m_MainMenu->handleInput();
@@ -66,6 +66,7 @@ void GameManager::update()
 				platform->renderPlat(m_Window);
 			}
 			
+			
 			if (m_Player != nullptr) m_Player->render(m_Window, deltaTime);
 			//if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
 			for (const auto& enemy_ : enemies)
@@ -83,16 +84,16 @@ void GameManager::update()
 				front_amb->renderPlat(m_Window);
 			}
 			 UpdateMobs(deltaTime);
-			 
+			 if (m_UpgradeMenu != nullptr) m_UpgradeMenu->render();
 		}
 		if (m_CurrentState == GAME_ENUMS::GAMESTATE::DEAD) {
-			cout << "dziala\n";
+			//cout << "dziala\n";
 			m_DeathMenu->render();
 			
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Tab)) {
-			m_UpgradeMenu->render();
-		}
+		
+			
+		
 		m_Window->display();
 		
 	}
