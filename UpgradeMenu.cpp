@@ -8,8 +8,8 @@ UpgradeMenu::UpgradeMenu(GameManager& _GameManager) : m_GameManager(_GameManager
 		cerr << "UpgradeMenu font loading error\n";
 	}
 
-
-	m_ButtonSprites.resize(buttonQuantity);
+	bufferTexts.resize(bufferShowQuantity);
+	m_ButtonSprites.resize(totalButtonQuantity);
 	m_ButtonTextures.resize(m_SpriteQuantity);
 	m_UpgradeTexts.resize(m_UpgradeStrings.size());
 	
@@ -24,21 +24,30 @@ UpgradeMenu::UpgradeMenu(GameManager& _GameManager) : m_GameManager(_GameManager
 		
 	}
 	for (int i = 0; i < m_SpriteQuantity; i++) {
-		m_ButtonTextures[i].loadFromFile(m_TexturePaths[i]); 
+	 m_ButtonTextures[i].loadFromFile(m_TexturePaths[i]);
 	}
 
-
-	for (int i = 0; i < buttonQuantity-1; i++) {
-		m_ButtonSprites[i].setTexture(m_ButtonTextures[i % (m_ButtonTextures.size()-1)]);
-		m_ButtonSprites[i].setScale(0.15, 0.15);
-		m_ButtonSprites[i].setOrigin(m_ButtonSprites[i].getLocalBounds().width / 2.0f, m_ButtonSprites[i].getLocalBounds().height / 2.0f);
+	for (auto& text : bufferTexts) {
+		text.setCharacterSize(20);
+		text.setFont(m_Font);
+		text.setFillColor(Color::Black);
+	}
+	for (int i = 0; i < arrowQuantity; i++) {
+		
+		
 		if (i % 2 != 0) { 
+			m_ButtonSprites[i].setTexture(m_ButtonTextures[1]);
 			m_ButtonSprites[i].rotate(180);
 		}
+		else m_ButtonSprites[i].setTexture(m_ButtonTextures[0]);
+		m_ButtonSprites[i].setScale(0.15, 0.15);
+		m_ButtonSprites[i].setOrigin(m_ButtonSprites[i].getLocalBounds().width / 2.0f, m_ButtonSprites[i].getLocalBounds().height / 2.0f);
 		
 	}
 	m_ButtonSprites[4].setTexture(m_ButtonTextures[2]);
-	m_ButtonSprites[4].setScale(0.15, 0.15);
+	m_ButtonSprites[4].setScale(0.2,0.2);
+	m_ButtonSprites[5].setTexture(m_ButtonTextures[3]);
+	m_ButtonSprites[5].setScale(0.2,0.2);
 }
 
 void UpgradeMenu::handleInput()
@@ -62,20 +71,23 @@ void UpgradeMenu::buttonsUpdate()
 
 	float yPosition = WINDOW_HEIGHT / 2.75f;
 	float xPosition = WINDOW_WIDTH / 2.0f;
-	Vector2f _BackButtonPos = {(scrollBounds.left+scrollBounds.width)/2.f-m_ButtonSprites[GAME_ENUMS::UPGRADE_BUTTONS::BACK].getGlobalBounds().width/4
-		,scrollBounds.top+540};
+	
 	for (int i = 0; i < m_ButtonSprites.size()-1; i++) {
 		sf::Vector2i pixelPos;
 		if (i<2)
 			pixelPos = { static_cast<int>(xPosition) + i * m_BetweenWidth, static_cast<int>(yPosition) };
-		else if(i<4)
-			pixelPos = { static_cast<int>(xPosition) + (i - 2) * m_BetweenWidth, static_cast<int>(yPosition) - 40 };
+		else if(i<4) pixelPos = { static_cast<int>(xPosition) + (i - 2) * m_BetweenWidth, static_cast<int>(yPosition) - 55 };
 		sf::Vector2f worldPos = mapToCords(pixelPos);
 		m_ButtonSprites[i].setPosition(worldPos);
 
 		
 	}
-	m_ButtonSprites[GAME_ENUMS::UPGRADE_BUTTONS::BACK].setPosition(_BackButtonPos);
+	Vector2i BackPixelPos = { static_cast<int>(xPosition-m_ButtonSprites[GAME_ENUMS::UPGRADE_BUTTONS::BACK].getGlobalBounds().width/2),static_cast<int>(WINDOW_HEIGHT /2 )};
+	Vector2f worldPos1 = mapToCords(BackPixelPos);
+	Vector2i AcceptPixelPos = { BackPixelPos.x+ 20+static_cast<int>(m_ButtonSprites[GAME_ENUMS::UPGRADE_BUTTONS::ACCEPT].getGlobalBounds().width/2), BackPixelPos.y - 50 };
+	Vector2f worldPos2 = mapToCords(AcceptPixelPos);
+	m_ButtonSprites[GAME_ENUMS::UPGRADE_BUTTONS::BACK].setPosition(worldPos1);
+	m_ButtonSprites[GAME_ENUMS::UPGRADE_BUTTONS::ACCEPT].setPosition(worldPos2);
 
 	
 
@@ -134,7 +146,7 @@ void UpgradeMenu::scrollCloed()
 	m_Scroll = std::make_unique<Sprite>(); // ¿eby nie powielaæ 
 	Closed = true;
 	m_Scroll->setTexture(m_ScrollTextures[0]);
-	m_Scroll->setScale(0.2, 0.2);
+	m_Scroll->setScale(0.1, 0.1);
 	sf::Vector2i pixelPos = { WINDOW_WIDTH - static_cast<int>(m_Scroll->getGlobalBounds().width+10),10 };
 	sf::Vector2f worldPos = mapToCords(pixelPos);
 	
@@ -156,25 +168,40 @@ void UpgradeMenu::handleInnerInput()
 					switch (i) {
 						
 					case GAME_ENUMS::UPGRADE_BUTTONS::HP_UP:
-
-						_player.m_HP++;
 						_player.m_Exp--;
+						m_BufforHP++;
+						break;
+					case GAME_ENUMS::UPGRADE_BUTTONS::HP_DOWN:
+						if (m_BufforHP > 0) { 
+							_player.m_Exp++;
+							m_BufforHP--; }
 						break;
 
 					case GAME_ENUMS::UPGRADE_BUTTONS::STRENGHT_UP:
-						_player.m_outputDamage++;
+						m_BufforSTRENGTH++;
 						_player.m_Exp--;
 						break;
-
+					case GAME_ENUMS::UPGRADE_BUTTONS::STRENGHT_DOWN:
+						if (m_BufforSTRENGTH > 0) { 
+							_player.m_Exp++;
+							m_BufforSTRENGTH--; }
+						break;
 					
 					}
 					
 					
 				}
+				if (i == GAME_ENUMS::UPGRADE_BUTTONS::ACCEPT && !m_isOnCoolDown) {
+					_player.m_HP += m_BufforHP;
+					_player.m_outputDamage += m_BufforSTRENGTH/2;
+					m_BufforHP = 0;
+					m_BufforSTRENGTH = 0;
+				}
 				if (i == GAME_ENUMS::UPGRADE_BUTTONS::BACK ) {
 
 					m_isOpen = false;
 				}
+				
 				m_isOnCoolDown = true;
 				m_CoolDown = 15;
 			}
@@ -185,6 +212,7 @@ void UpgradeMenu::handleInnerInput()
 	}
 	if (m_CoolDown == 0) m_isOnCoolDown = false;
 	else m_CoolDown--;
+
 }
 
 void UpgradeMenu::update()
@@ -208,6 +236,18 @@ bool UpgradeMenu::collider(FloatRect _bounds)
 	else return false;
 }
 
+void UpgradeMenu::upgdateBufferVisuals()
+{
+
+	Vector2f STR_Pos = { m_ButtonSprites[RED_STR].getPosition().x+ m_BetweenWidth/2, m_ButtonSprites[RED_STR].getPosition().y-10 };
+	Vector2f HP_Pos = { m_ButtonSprites[RED_HP].getPosition().x+ m_BetweenWidth/2, m_ButtonSprites[RED_HP].getPosition().y-10 };
+	bufferTexts[B_STR].setString(std::to_string(m_BufforSTRENGTH));
+	bufferTexts[B_HP].setString(std::to_string(m_BufforHP));
+
+	bufferTexts[B_STR].setPosition(STR_Pos);
+	bufferTexts[B_HP].setPosition(HP_Pos);
+}
+
 Vector2f UpgradeMenu::mapToCords(Vector2i pixelPos)
 {
 	Vector2f worldPos = m_GameManager.getWindow()->mapPixelToCoords(pixelPos);
@@ -217,7 +257,7 @@ Vector2f UpgradeMenu::mapToCords(Vector2i pixelPos)
 void UpgradeMenu::render()
 {
 	RenderWindow* _window = m_GameManager.getWindow();
-
+	cout << "buffor: " << m_BufforHP << endl;
 	//cout << m_ButtonSprites[BUTTONS::RED_STR].getPosition().x<<endl;
 	cout << m_isOpen << endl;
 	if(m_Scroll!=nullptr) _window->draw(*m_Scroll);
@@ -227,9 +267,12 @@ void UpgradeMenu::render()
 		buttonsUpdate();
 		viewUpdateTexts();
 		handleInnerInput();
-		
+		upgdateBufferVisuals();
 		for (auto& button : m_ButtonSprites) {
 			_window->draw(button);
+		}
+		for (auto& text : bufferTexts) {
+			_window->draw(text);
 		}
 		for (auto& text : m_UpgradeTexts) {
 			_window->draw(text);
