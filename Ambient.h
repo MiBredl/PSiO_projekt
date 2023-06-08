@@ -9,15 +9,16 @@ class Ambient :public Object
 private:
 	string imagePath = "textures/Map/world/";
 	void  loadTextures();
+	void loadBackgroundTextures();
 	float speed;
 	float posY;
-	float posX;
-
+	bool isDoor = false;
 
 public:
 	void updateParalax();
 	void updateAmbients();
 	Ambient(GameManager*, string, Vector2f, Vector2f);
-	Ambient(GameManager*, string, Vector2f, Vector2f,int, float);
+	Ambient(GameManager*, string, Vector2f, Vector2f, int, float);
+	Ambient(GameManager*, string, Vector2f, Vector2f, bool);
 };
 

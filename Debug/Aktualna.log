@@ -1,0 +1,197 @@
+﻿  GameManager.cpp
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(94,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(96,108): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(96,77): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(97,94): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(97,64): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(231,90): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(232,92): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(233,90): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(234,83): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(385,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(387,24): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(388,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(405,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(415,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(415,59): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(423,87): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(423,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(423,64): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(423,57): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(427,88): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(427,73): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(427,65): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(427,57): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(433,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(447,77): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(447,63): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(452,88): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(452,73): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(452,64): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(452,42): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(456,88): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(456,73): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(456,64): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(456,42): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(501,97): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(391,8): warning C4101: 'h': unreferenced local variable
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(535,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(537,24): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Dominik\source\repos\Aktualna\Aktualna\GameManager.cpp(538,21): warning C4018: '<': signed/unsigned mismatch
+  Aktualna.vcxproj -> C:\Users\Dominik\source\repos\Aktualna\Debug\Aktualna.exe

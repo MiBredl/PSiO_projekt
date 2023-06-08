@@ -6,6 +6,7 @@ class Object
 {
 protected:
 	class GameManager* m_GameManager;
+	class WorldGenerator* m_WorldGenerator;
 	Textures* current_Texture;
 	Sprite* sprite;
 	map<string, Textures*> m_Texture;

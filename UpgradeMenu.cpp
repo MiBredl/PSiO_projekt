@@ -225,7 +225,7 @@ void UpgradeMenu::update()
 
 bool UpgradeMenu::collider(FloatRect _bounds)
 {
-	sf::Vector2i _mousePos = sf::Mouse::getPosition();
+	sf::Vector2i _mousePos = sf::Mouse::getPosition(*m_GameManager.getWindow());
 	sf::Vector2f worldMousePos = mapToCords(_mousePos);
 	if (_bounds.left <= worldMousePos.x
 		&& _bounds.left + _bounds.width >= worldMousePos.x
@@ -257,7 +257,7 @@ Vector2f UpgradeMenu::mapToCords(Vector2i pixelPos)
 void UpgradeMenu::render()
 {
 	RenderWindow* _window = m_GameManager.getWindow();
-	//cout << "buffor: " << m_BufforHP << endl;
+	cout << "buffor: " << m_BufforHP << endl;
 	//cout << m_ButtonSprites[BUTTONS::RED_STR].getPosition().x<<endl;
 	cout << m_isOpen << endl;
 	if(m_Scroll!=nullptr) _window->draw(*m_Scroll);

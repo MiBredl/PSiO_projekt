@@ -18,7 +18,7 @@ MainMenu::MainMenu(GameManager& _GameManager): m_GameManager(_GameManager)
 void MainMenu::handleInput()
 {
 	
-	sf::Vector2i _mousePos = sf::Mouse::getPosition();
+	sf::Vector2i _mousePos = sf::Mouse::getPosition(*m_GameManager.getWindow());
 	sf::Vector2f worldMousePos = m_GameManager.getWindow()->mapPixelToCoords(_mousePos);
 
 	for (int i = 0; i <m_Texts.size(); i++) {
