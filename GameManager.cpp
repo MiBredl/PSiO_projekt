@@ -1,55 +1,98 @@
 #include "GameManager.h"
-#include<iostream>
 
-GameManager::GameManager()
+
+
+GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 {
-	View view();
-	m_Window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT),"SUS SOULS");
-	m_Clock = new sf::Clock;
-	m_Player = new Player(this);
-	m_Enemy = new Enemy(1,this);
-	m_Menu = new Menu();
 
-	worldGenP(0, platforms, world1);
-	worldGenA(0, f_ambients, b_ambients, background, world1);
+	m_Window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT),"SUS SOULS");
+	m_Window->setFramerateLimit(60);
+	view.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	loadWorld1();
+	InitializeGame();
+	m_UpgradeMenu = new UpgradeMenu(*this);
+	m_MainMenu = new MainMenu(*this);
 	update();
 }
 
 void GameManager::update()
 {
+
+	
 	while (m_Window->isOpen()) {
 		eventManager();
+		view.setCenter(m_Player->getSprite()->getPosition().x, WINDOW_HEIGHT / 2);
 		m_Window->clear();
-		float deltaTime = getElapsedTime().asSeconds();
-		for (const auto& bground : background)
-		{
-			bground->renderPlat(m_Window);
+		cout <<"CURRENT STATE: " << m_CurrentState << endl;
+		
+		if (m_MainMenu != nullptr ) {
+			m_MainMenu->handleInput();
+			if (m_CurrentState == GAME_ENUMS::GAMESTATE::PAUSED) { 
+				m_MainMenu->render(); 
+			}
+			 
 		}
-		for (const auto& back_amb : b_ambients)
-		{
-			back_amb->renderPlat(m_Window);
+		
+		if (m_CurrentState== GAME_ENUMS::GAMESTATE::RESTART) {
+			//cout << "RESTART\n";
+			RestartGame();
+			InitializeGame();
+			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
 		}
-		for (const auto& platform : platforms) {
-			platform->renderPlat(m_Window);
+		
+		if (m_CurrentState == GAME_ENUMS::GAMESTATE::PLAYING) {
+			
+			m_Window->setView(view);
+			view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
+			
+			float deltaTime = getElapsedTime().asSeconds();
+			for (Ambient* ambient : far_background)
+			{
+				ambient->renderPlat(m_Window);
+				ambient->updateParalax();
+			}
+			for (const auto& bground : close_background)
+			{
+				bground->renderPlat(m_Window);
+			}
+			for (const auto& back_amb : b_ambients)
+			{
+				back_amb->renderPlat(m_Window);
+			}
+			for (const auto& platform : platforms) {
+				platform->renderPlat(m_Window);
+			}
+			
+			if (m_Player != nullptr) m_Player->render(m_Window, deltaTime);
+			//if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
+			for (const auto& enemy_ : enemies)
+			{
+				enemy_->render(m_Window, deltaTime);
+			}
+			if (enemies.size() != 0)
+			{
+				for (const auto& _enem : enemies) {
+					_enem->update(deltaTime, m_Window);
+				}
+			}
+			for (const auto& front_amb : f_ambients)
+			{
+				front_amb->renderPlat(m_Window);
+			}
+			 UpdateMobs(deltaTime);
+			 
 		}
-		if (m_Player != nullptr) {
-			m_Player->update(deltaTime, m_Window);
+		if (m_CurrentState == GAME_ENUMS::GAMESTATE::DEAD) {
+			cout << "dziala\n";
+			m_DeathMenu->render();
+			
 		}
-		if (m_Enemy != nullptr) {
-			m_Enemy->update(deltaTime, m_Window);
-		}
-
-		//Jako ostatnie do renderu
-		for (const auto& front_amb : f_ambients)
-		{
-			front_amb->renderPlat(m_Window);
-		}
-		if (m_Menu != nullptr) {		
-			m_Menu->update(m_Window);
+		if (Keyboard::isKeyPressed(Keyboard::Tab)) {
+			m_UpgradeMenu->render();
 		}
 		m_Window->display();
+		
 	}
-
 }
 
 void GameManager::eventManager()
@@ -57,15 +100,123 @@ void GameManager::eventManager()
 	while (m_Window->pollEvent(m_Event))
 	{
 		switch (m_Event.type) {
-		case sf::Event::Closed: 
+		case sf::Event::Closed:
 			m_Window->close();
 			break;
 		}
 	}
+	
 }
-vector<Platform*> GameManager::worldGenP(int starting_pos, vector<Platform*>& pvec, vector<vector<vector<int>>>& in_vec)
+void GameManager::UpdateMobs(float deltaTime)
+{
+		if (m_Player != nullptr) {
+			m_Player->update(deltaTime, m_Window);
+
+		}
+		for (const auto& enemy_ : enemies)
+		{
+			enemy_->update(deltaTime, m_Window);
+		}
+}
+void GameManager::InitializeGame()
+{
+	m_Clock = new sf::Clock;
+	m_Player = new Player(this);
+	worldGenE(0, enemies, world1);
+	m_DeathMenu = new DeathMenu(*this);
+
+	
+}
+void GameManager::RestartGame()
+{
+
+	
+	
+	//ni¿ej do zmiany poziomu 
+	/*for (auto& background : close_background) {
+		delete background;
+	}
+	for (auto& background : far_background) {
+		delete background;
+	}
+	for (auto& platform : platforms) {
+		delete platform;
+	}
+	for (auto& ambient : f_ambients) {
+		delete ambient;
+	}
+	for (auto& ambient : b_ambients) {
+		delete ambient;
+	}*/
+	/*far_background.clear();
+	close_background.clear();
+	b_ambients.clear();
+	f_ambients.clear();
+	
+	*/
+
+	for (auto enemy : enemies) {
+		delete enemy;
+	}
+	
+	
+	enemies.clear();
+	delete m_Clock;
+	delete m_Player;
+	delete m_Enemy;
+	delete m_DeathMenu;
+	
+}
+void GameManager::loadWorld1()
+{
+	/*worldGenP(0, platforms, world1);
+	worldGenA(0, f_ambients, b_ambients, close_background, world1);
+	*/
+	tie(platforms, f_ambients, b_ambients, close_background,platRects) = worldGen(0, platforms, f_ambients, b_ambients, close_background,platRects,world1);
+	far_background.push_back(new Ambient(this, "Sky", { 0,440 }, { 10,5.25 }, 1));
+	far_background.push_back(new Ambient(this, "MoutainsFar", { 0,440 }, { 6,5.25 }, 0.9));
+	far_background.push_back(new Ambient(this, "MoutainsClose", { 0,440 }, { 6,5.25 }, 0.8));
+	far_background.push_back(new Ambient(this, "cloudsMidde", { 0,440 }, { 6,5.25 }, 0.7));
+	far_background.push_back(new Ambient(this, "Hill", { 0,440 }, { 6,5.25 }, 0.6));
+	far_background.push_back(new Ambient(this, "cloudsFront", { 0,440 }, { 6,5.25 }, 0.5));
+}
+
+vector<Enemy*> GameManager::worldGenE(int starting_pos, vector<Enemy*>& evec, vector<vector<vector<int>>>& in_vec)
+{
+	for (int i = 0; i < in_vec.size(); i++)
+	{
+		float f_starting_pos = starting_pos;
+		for (int j = 0; j < in_vec[i].size(); j++)
+		{
+			float y = 80;
+			switch (in_vec[i][j][3])
+			{
+			case 1:
+				evec.push_back(new Enemy(1, this, { f_starting_pos,y * i - 60 }));
+				break;
+			case 2:
+				evec.push_back(new Enemy(2, this, { f_starting_pos,y * i - 60 }));
+				break;
+			case 3:
+				evec.push_back(new Enemy(3, this, { f_starting_pos,y * i - 60 }));
+				break;
+
+			case 4:
+				//evec.push_back(new Enemy(4,this, { f_starting_pos,y * i }));
+				break;
+			}
+
+
+			f_starting_pos += 80;
+		}
+	}
+	return evec;
+}
+
+tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, vector<PlatRects*>> GameManager::worldGen(int starting_pos, vector<Platform*>& pvec, vector<Ambient*>& favec, vector<Ambient*>& bavec, vector<Ambient*>& bvec, vector<PlatRects*> rect ,vector<vector<vector<int>>>& in_vec)
 {
 	Vector2f scale1 = { 2,2 };
+	Vector2f scale = { 2,2 }, scale2 = { 3,2 };
 	for (int i = 0; i < in_vec.size(); i++)
 	{
 		float f_starting_pos = starting_pos;
@@ -74,74 +225,69 @@ vector<Platform*> GameManager::worldGenP(int starting_pos, vector<Platform*>& pv
 			float y = 80;
 			float ni = static_cast<float>(i);
 			float nj = static_cast<float>(j);
-
+			Vector2f platsize = { 0,60 };
+			float current_s_pos=0;
 			switch (in_vec[i][j][0])
 			{
 			case 0:
 				break;
 			case 1:
-				pvec.push_back(new Platform(this, "Grass", { f_starting_pos,y * i }, scale1));
+				pvec.push_back(new Platform(this, "Grass", { f_starting_pos ,y * i }, scale1));
+				platsize.x += 80;
 				break;
 			case 2:
-				pvec.push_back(new Platform(this, "CliffRight", { f_starting_pos,y * i }, scale1));
-				break;
+			{
+				pvec.push_back(new Platform(this, "CliffRight", { f_starting_pos ,y * i }, scale1));
+				platsize.x += 80;
+				rect.push_back(new PlatRects(IntRect(current_s_pos, y * i, platsize.x, platsize.y)));
+				platsize.x = 0;
+			break;
+			}
 			case 3:
 				pvec.push_back(new Platform(this, "CliffRockRight", { f_starting_pos,y * i }, scale1));
 				break;
 			case 4:
-				pvec.push_back(new Platform(this, "CliffLeft", { f_starting_pos,y * i }, scale1));
+				pvec.push_back(new Platform(this, "CliffLeft", { f_starting_pos - 2,y * i }, scale1));
+				current_s_pos = f_starting_pos;
+				platsize.x += 80;
 				break;
 			case 5:
-				pvec.push_back(new Platform(this, "CliffRockLeft", { f_starting_pos,y * i }, scale1));
+				pvec.push_back(new Platform(this, "CliffRockLeft", { f_starting_pos - 2,y * i }, scale1));
 				break;
 			case 6:
-				pvec.push_back(new Platform(this, "PlatSmall", { f_starting_pos,y * i }, scale1));
+				pvec.push_back(new Platform(this, "PlatSmall", { f_starting_pos - 1,y * i }, scale1));
+				rect.push_back(new PlatRects(IntRect(f_starting_pos - 1, y * i, 40 * scale1.x, 39 * scale1.y)));
 				break;
 			case 7:
 				pvec.push_back(new Platform(this, "PlatBig", { f_starting_pos - 10,y * i }, scale1));
+				rect.push_back(new PlatRects(IntRect(f_starting_pos - 1, y * i, 98 * scale1.x , 76 * scale1.y)));
 				break;
 			case 8:
-				pvec.push_back(new Platform(this, "PlatL", { f_starting_pos,y * i - 20 }, { 2,1 }));
+				pvec.push_back(new Platform(this, "PlatL", { f_starting_pos - 1,y * i - 30 }, { 2,1 }));
+				current_s_pos = f_starting_pos;
+				platsize.x += 59 * scale.x;
 				break;
 			case 9:
 				for (int k = 0; k < 4; k++)
-					pvec.push_back(new Platform(this, "PlatM", { f_starting_pos + k * 16,y * i - 20 }, { 2,1 }));
+				{
+					pvec.push_back(new Platform(this, "PlatM", { f_starting_pos + k * 16 - 1,y * i - 30 }, { 2,1 }));
+					platsize.x += 16 * 4 * scale1.x;
+				}
+					
 				break;
 			case 10:
-				pvec.push_back(new Platform(this, "PlatR", { f_starting_pos,y * i - 20 }, { 2,1 }));
+				pvec.push_back(new Platform(this, "PlatR", { f_starting_pos - 2,y * i - 30 }, { 2,1 }));
+				platsize.x += 59 * scale1.x;
+				rect.push_back(new PlatRects(IntRect(current_s_pos, y * i-30, platsize.x, platsize.y)));
+				platsize.x = 0;
 				break;
 			case 11:
 				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1));
+				rect.push_back(new PlatRects(IntRect(f_starting_pos, y * i - 20, 48 * scale1.x, 32 * scale1.y)));
 				break;
 			case 12:
 				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1));
-				break;
-
-			}
-			f_starting_pos += 40 * scale1.x;
-		}
-	}
-	return pvec;
-}
-
-vector<Ambient*> GameManager::worldGenA(int starting_pos, vector<Ambient*>& favec, vector<Ambient*>& bavec, vector<Ambient*>& bvec, vector<vector<vector<int>>>& in_vec)
-{
-	Vector2f scale1 = { 2,2 }, scale2 = { 3,2 };
-	for (int i = 0; i < in_vec.size(); i++)
-	{
-		float f_starting_pos = starting_pos;
-		for (int j = 0; j < in_vec[i].size(); j++)
-		{
-			float y = 80;
-			float ni = static_cast<float>(i);
-			float nj = static_cast<float>(j);
-
-			switch (in_vec[i][j][2])
-			{
-			case 0:
-				break;
-			case 1:
-				bvec.push_back(new Ambient(this, "FloorBlack", { f_starting_pos,y * i - 5 }, scale1));
+				rect.push_back(new PlatRects(IntRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y)));
 				break;
 			}
 
@@ -169,23 +315,48 @@ vector<Ambient*> GameManager::worldGenA(int starting_pos, vector<Ambient*>& fave
 				break;
 			case 7:
 				if (j % 2 == 0)
-					favec.push_back(new Ambient(this, "Tree", { f_starting_pos - 60,y * i - 85 }, { 1.5,1.5 }));
+				{
+					favec.push_back(new Ambient(this, "Tree", { f_starting_pos - 60,y * i - 100 }, { 2,2 }));
+					favec.push_back(new Ambient(this, "Grass", { f_starting_pos,y * i + 80 }, scale2));
+				}
 				else
-					bavec.push_back(new Ambient(this, "Tree", { f_starting_pos - 60,y * i - 85 }, { 1.5,1.5 }));
+					bavec.push_back(new Ambient(this, "Tree", { f_starting_pos - 60,y * i - 100 }, { 2,2 }));
 				break;
 			case 8:
-				favec.push_back(new Ambient(this, "FenceLeft", { f_starting_pos,y * i }, scale1));
+				bavec.push_back(new Ambient(this, "FenceLeft", { f_starting_pos,y * i + 25 }, scale1));
 				break;
 			case 9:
-				favec.push_back(new Ambient(this, "FenceMiddle", { f_starting_pos,y * i }, scale1));
+				bavec.push_back(new Ambient(this, "FenceMiddle", { f_starting_pos - 1,y * i + 25 }, scale1));
 				break;
 			case 10:
-				favec.push_back(new Ambient(this, "FenceRight", { f_starting_pos,y * i }, scale1));
+				bavec.push_back(new Ambient(this, "FenceRight", { f_starting_pos - 17,y * i + 25 }, scale1));
+				break;
+			}
+
+			switch (in_vec[i][j][2])
+			{
+			case 0:
+				break;
+			case 1:
+				bvec.push_back(new Ambient(this, "BackBlack", { f_starting_pos - 1,y * i - 5 }, scale1));
+				break;
+			case 2:
+				bvec.push_back(new Ambient(this, "BackBlack", { f_starting_pos - 1,y * i - 5 }, scale1));
+				bvec.push_back(new Ambient(this, "BackBush", { f_starting_pos - 1,y * i - 5 }, scale1));
+				break;
+			case 3:
+				bvec.push_back(new Ambient(this, "BackBlack", { f_starting_pos - 1,y * i - 5 }, scale1));
+				bvec.push_back(new Ambient(this, "BackRock", { f_starting_pos - 1,y * i - 5 }, scale1));
+				break;
+			case 4:
+				bvec.push_back(new Ambient(this, "BackBlack", { f_starting_pos - 1,y * i - 5 }, scale1));
+				bvec.push_back(new Ambient(this, "BackRockW", { f_starting_pos - 1,y * i - 5 }, scale1));
 				break;
 			}
 
 			f_starting_pos += 40 * scale1.x;
 		}
 	}
-	return favec, bavec, bvec;
+
+	return std::make_tuple(pvec, favec, bavec, bvec,rect);
 }
