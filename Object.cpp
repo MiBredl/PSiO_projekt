@@ -1,5 +1,5 @@
 #include "Object.h"
-#include <iostream>
+
 void Object::renderPlat(RenderWindow* window)
 {
 	this->sprite->setTextureRect(current_Texture->getRect());
@@ -24,4 +24,9 @@ void Object::addTextures(Textures* _text)
 	if (this->m_Texture.find(_text->getName()) != this->m_Texture.end()) return;
 
 	this->m_Texture.insert(pair<string, Textures*>(_text->getName(), _text));
+}
+
+void Object::setColor(Color& color)
+{
+	sprite->setColor(color);
 }

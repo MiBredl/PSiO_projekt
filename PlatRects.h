@@ -9,5 +9,6 @@ public:
 	IntRect getRect() {
 		return intRect;
 	}
+
 };
 

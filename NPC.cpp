@@ -1,5 +1,5 @@
 #include "NPC.h"
-#include <iostream>
+
 
 
 
@@ -10,9 +10,9 @@ void NPC::render(sf::RenderTarget* window,float deltaTime)
 	m_CurrentAnimation->render(deltaTime);
 	this->sprite->setTextureRect(m_CurrentAnimation->getFrame());
 	if (!iFrameTime) { sprite->setColor(Color(255, 255, 255, 255)); }
-	else { 
-	sprite->setColor(Color(255, 0, 0, 255));
-	iFrameTime--;
+	else {
+		sprite->setColor(Color(255, 0, 0, 255));
+		iFrameTime--;
 	}
 	if (m_AnimationTime) {
 		m_AnimationTime--;
@@ -34,7 +34,7 @@ void NPC::setAnimation(std::string _mapKey)
 	this->m_CurrentAnimation->reload();
 	this->sprite->setTexture(*this->m_CurrentAnimation->getTexture());
 	
-
+	
 }
 
 void NPC::addAnimation( Animation* _animation)
@@ -48,12 +48,13 @@ void NPC::addAnimation( Animation* _animation)
 
 void NPC::damageManager(float damage)
 {
-	
+	isHit = false;
 	if (!iFrameTime) {
-		if (damage == 1) std::cout << "HIT\n";
-		iFrameTime = 650;
+		
+		iFrameTime = 45;
 		
 		m_HP -= damage;
+		isHit = true;
 		if (m_HP <= 0) {
 			isDead = true;
 		}

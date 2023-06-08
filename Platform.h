@@ -9,6 +9,7 @@ private:
 	string imagePath = "textures/Map/world/";
 	void  loadTextures();
 public:
+	
 	Platform(GameManager*, string ,Vector2f,Vector2f);
 };
 

@@ -14,7 +14,10 @@ public:
 	void renderPlat(RenderWindow* window);
 	void setTextures(string);
 	void addTextures(Textures*);
-
+	void setColor(Color&);
+	FloatRect getGlobalBounds() {
+		return this->sprite->getGlobalBounds();
+	}
 	GameManager* getGameMeneger() {
 		return m_GameManager;
 	}
