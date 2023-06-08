@@ -8,6 +8,4 @@ Textures::Textures(string _name,string directory, IntRect rect):
 	texture = new Texture;
 	
 	if (!texture->loadFromFile(directory));
-	//cout << "xD\n";
-
 }

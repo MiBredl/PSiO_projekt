@@ -7,9 +7,6 @@ void Ambient::loadTextures()
 	addTextures(new Textures("FloorRock", imagePath + "objects.png", { 144,183,32,41 }));
 	addTextures(new Textures("FloorRockSmall", imagePath + "objects.png", { 480,186,16,22 }));
 	addTextures(new Textures("FloorRockGrass", imagePath + "objects.png", { 144,105,32,55 }));
-	addTextures(new Textures("FloorRockBush", imagePath + "objects.png", { 432,166,32,40 }));
-	addTextures(new Textures("FloorMoss", imagePath + "objects.png", { 464,243,32,45 }));
-	addTextures(new Textures("Grass", imagePath + "objects.png", { 192,186,40,40 }));
 	//ambients
 	addTextures(new Textures("Tree", imagePath + "objects.png", { 191,45,123,115 }));
 	addTextures(new Textures("FenceLeft", imagePath + "objects.png", { 584,188,41,30 }));
@@ -21,9 +18,6 @@ void Ambient::loadTextures()
 	addTextures(new Textures("BackRock", imagePath + "objects.png", { 240,240,64,32 }));
 	addTextures(new Textures("BackRockW", imagePath + "objects.png", { 192,253,32,40 }));
 
-	//addTextures(new Textures("Sky", imagePath + "backgroundSky.jpg", { 0,0,1920,1080 }));
-	//addTextures(new Textures("cloud", imagePath + "cloud.png", { 0,0,676,328 }, 0));
-
 	addTextures(new Textures("cloudsFront", imagePath + "background1/clouds_front.png", { 0,0,1920,216 }));
 	addTextures(new Textures("cloudsMidde", imagePath + "background1/clouds_mid.png", { 0,0,1920,216 }));
 	addTextures(new Textures("MoutainsFar", imagePath + "background1/far_mountains.png", { 0,0,1920,216 }));
@@ -32,13 +26,13 @@ void Ambient::loadTextures()
 	addTextures(new Textures("Sky", imagePath + "background1/sky.png", { 0,0,1920,216 }));
 
 	//addTextures(new Textures("Sky2", imagePath + "background2/1.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Sky2", imagePath + "background2/2.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Tree1", imagePath + "background2/3.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Tree2", imagePath + "background2/4.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Tree3", imagePath + "background2/5.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Fog6", imagePath + "background2/6.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Grasy", imagePath + "background2/7.png", { 0,0,1920,1080 }));
-	addTextures(new Textures("Trees", imagePath + "background2/8.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Sky2", imagePath + "background2/2.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Tree1", imagePath + "background2/3.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Tree2", imagePath + "background2/4.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Tree3", imagePath + "background2/5.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Fog6", imagePath + "background2/6.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Grasy", imagePath + "background2/7.png", { 0,0,1920,1080 }));
+	//addTextures(new Textures("Trees", imagePath + "background2/8.png", { 0,0,1920,1080 }));
 
 }
 

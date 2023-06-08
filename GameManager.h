@@ -18,6 +18,7 @@ public:
 	void UpdateMobs(float);
 	void InitializeGame();
 	void RestartGame();
+	void loadBack();
 	void loadWorld1();
 	void loadWorld2();
 	/*vector<Platform*> worldGenP(int starting_pos, vector<Platform*>& pvec, vector<vector<vector<int>>>& in_vec);

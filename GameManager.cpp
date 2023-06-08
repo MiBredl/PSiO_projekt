@@ -11,8 +11,8 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 	
 
 	
-	//loadWorld1();
-	loadWorld2();
+	loadWorld1();
+	//loadWorld2();
 	InitializeGame();
 	m_UpgradeMenu = new UpgradeMenu(*this);
 	m_MainMenu = new MainMenu(*this);
@@ -99,7 +99,6 @@ void GameManager::update()
 		
 	}
 }
-
 void GameManager::eventManager()
 {
 	while (m_Window->pollEvent(m_Event))
@@ -128,7 +127,7 @@ void GameManager::InitializeGame()
 	m_Clock = new sf::Clock;
 	m_Player = new Player(this);
 	//worldGenE(0, enemies, world1);
-	worldGenE(0, enemies, world2);
+	//worldGenE(0, enemies, world2);
 	m_DeathMenu = new DeathMenu(*this);
 
 	
@@ -173,31 +172,33 @@ void GameManager::RestartGame()
 	delete m_DeathMenu;
 	
 }
+void GameManager::loadBack()
+{
+	far_background.push_back(new Ambient(this, "Sky", { 0,440 }, { 10,5.25 }, 4, 1));
+	far_background.push_back(new Ambient(this, "MoutainsFar", { 0,440 }, { 6,5.25 }, 4, 0.9));
+	far_background.push_back(new Ambient(this, "MoutainsClose", { 0,440 }, { 6,5.25 }, 4, 0.8));
+	far_background.push_back(new Ambient(this, "cloudsMidde", { 0,440 }, { 6,5.25 }, 4, 0.7));
+	far_background.push_back(new Ambient(this, "Hill", { 0,440 }, { 6,5.25 }, 4, 0.6));
+	far_background.push_back(new Ambient(this, "cloudsFront", { 0,440 }, { 6,5.25 }, 4, 0.5));
+}
 void GameManager::loadWorld1()
 {
-
+	loadBack();
 	tie(platforms, f_ambients, b_ambients, close_background, platRects) = worldGen(0, platforms, f_ambients, b_ambients, close_background, platRects, world1);
 
-	far_background.push_back(new Ambient(this, "Sky", { 0,440 }, { 10,5.25 }, 4,1));
-	far_background.push_back(new Ambient(this, "MoutainsFar", { 0,440 }, { 6,5.25 },4, 0.9));
-	far_background.push_back(new Ambient(this, "MoutainsClose", { 0,440 }, { 6,5.25 },4 ,0.8));
-	far_background.push_back(new Ambient(this, "cloudsMidde", { 0,440 }, { 6,5.25 },4 ,0.7));
-	far_background.push_back(new Ambient(this, "Hill", { 0,440 }, { 6,5.25 },4 ,0.6));
-	far_background.push_back(new Ambient(this, "cloudsFront", { 0,440 }, { 6,5.25 },4 ,0.5));
+	
 }
 void GameManager::loadWorld2()
 {
 	Color color(220, 80,20);
+	Color color2(220, 20,20);
 	tie(platforms, f_ambients, b_ambients, close_background, platRects) = worldGen(0, platforms, f_ambients, b_ambients, close_background, platRects, world2);
 
-	far_background.push_back(new Ambient(this, "Sky2",	{ 0,0 }, { 1.2,1 },2 ,1));
-	far_background.push_back(new Ambient(this, "Tree1", { 0,0 }, { 1.5,1 },2, 0.95));
-	far_background.push_back(new Ambient(this, "Tree2", { 0,0 }, { 1.5,1 },2, 0.9));
-	far_background.push_back(new Ambient(this, "Tree3", { 0,0 }, { 1.5,1 },2 ,0.85));
-	far_background.push_back(new Ambient(this, "Fog6",	{ 0,0 }, { 1.6,1 },2 ,0.8));	
-	far_background.push_back(new Ambient(this, "Trees", { 0,0 }, { 1,1 },2 ,0.65));
-	far_background.push_back(new Ambient(this, "Grasy", { 0,0 }, { 3,1 },2 ,0.65));
-
+	loadBack();
+	for (auto& b : far_background)
+	{
+		b->setColor(color2);
+	}
 	for (auto& plat : platforms)
 	{
 		plat->setColor(color);
