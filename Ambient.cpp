@@ -83,3 +83,15 @@ void Ambient::updateParalax()
 void Ambient::updateAmbients()
 {
 }
+
+void Ambient::updateDoor()
+{
+	if (isDoor && sprite->getGlobalBounds().intersects(m_GameManager->getPlayer()->getSprite()->getGlobalBounds()))
+	{
+		sprite->setColor(Color::Red);
+	}
+	else if (isDoor)
+	{
+		sprite->setColor(Color::Blue);
+	}
+}

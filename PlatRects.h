@@ -1,16 +1,23 @@
 #pragma once
 #include"libraries.h"
+
+//#include "GameManager.h"
+
 class PlatRects
 {
 private:
 	class GameManager* m_GameManager;
 	bool isActive = false;
-	IntRect intRect;
+	FloatRect fRect;
 public:
-	PlatRects(IntRect);
-	IntRect getRect() {
-		return intRect;
+	PlatRects(GameManager*,FloatRect);
+	FloatRect getRect() {
+		return fRect;
 	}
+	GameManager* getGameMeneger() {
+		return m_GameManager;
+	}
+	bool isAktiveP();
 
 };
 
