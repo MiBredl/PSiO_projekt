@@ -15,6 +15,7 @@ public:
 	void addTextures(Textures*);
 	void setColor(Color&);
 	FloatRect getGlobalBounds() {
+
 		return this->sprite->getGlobalBounds();
 	}
 	GameManager* getGameMeneger() {

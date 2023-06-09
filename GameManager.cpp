@@ -11,7 +11,7 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 	
 
 	//Tu masz to wczytywanie œwiata (1 i 2) do wpisania jeszcze jest w lini 44
-	InitializeGame(1);
+	InitializeGame(2);
 
 	m_UpgradeMenu = new UpgradeMenu(*this);
 	m_MainMenu = new MainMenu(*this);
@@ -39,7 +39,7 @@ void GameManager::update()
 		if (m_CurrentState== GAME_ENUMS::GAMESTATE::RESTART) {
 			//cout << "RESTART\n";
 			RestartGame();
-			InitializeGame(1);
+			InitializeGame(2);
 			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
 		}
 		
@@ -63,12 +63,25 @@ void GameManager::update()
 				back_amb->renderPlat(m_Window);
 				back_amb->updateDoor();
 			}
-			for (const auto& platform : platforms) {
+			for (auto it = platforms.begin(); it != platforms.end();)
+			{
+				Platform* platform = *it;
 				platform->renderPlat(m_Window);
-			}		
+				platform->platformUpdate();
+
+				if (platform->isDeadPlat())
+				{
+					it = platforms.erase(it);
+					delete platform;
+				}
+				else
+				{
+					++it;
+				}
+			}
 			
 			if (m_Player != nullptr) m_Player->render(m_Window, deltaTime);
-			//if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
+			if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
 			for (const auto& enemy_ : enemies)
 			{
 				enemy_->render(m_Window, deltaTime);
@@ -89,24 +102,32 @@ void GameManager::update()
 			}
 			for (auto& rect : rectangles)
 			{
+				//zakomentuj to i prostok¹ty znikn¹
 				if (rect != nullptr) m_Window->draw(*rect);
-
 			}
-			for (int i = 0; i < platRects.size(); i++)
+			for (int i = 0; i < platRects.size();)
 			{
 				rectangles.push_back(new RectangleShape(Vector2f(platRects[i]->getRect().width, platRects[i]->getRect().height)));
 				rectangles[i]->setPosition(Vector2f(platRects[i]->getRect().left, platRects[i]->getRect().top));
-				//cout << platRects[i]->getRect().left << " " << platRects[i]->getRect().top << endl;
-				/*if (rectangles[i]->getGlobalBounds().intersects(m_Player->getSprite()->getGlobalBounds()))
-				{
-					rectangles[i]->setFillColor(Color::Blue);
-				}*/
+				platRects[i]->updatePlatRects();
 
-				if (platRects[i]->isAktiveP())
-					rectangles[i]->setFillColor(Color::Blue);
+				if (platRects[i]->isDeadPlatRects())
+				{
+					delete platRects[i];
+					platRects.erase(platRects.begin() + i);
+					rectangles.erase(rectangles.begin() + i);
+				}
 				else
-					rectangles[i]->setFillColor(Color::Red);
+				{
+					if (platRects[i]->isAktiveP())
+						rectangles[i]->setFillColor(Color::Blue);
+					else
+						rectangles[i]->setFillColor(Color::Red);
+
+					i++;
+				}
 			}
+
 			 UpdateMobs(deltaTime);
 			 if (m_UpgradeMenu != nullptr) m_UpgradeMenu->render();
 		}
@@ -145,8 +166,7 @@ void GameManager::UpdateMobs(float deltaTime)
 void GameManager::InitializeGame(int i)
 {
 	m_Clock = new sf::Clock;
-	m_Player = new Player(this);
-	
+	m_Player = new Player(this);	
 	m_DeathMenu = new DeathMenu(*this);
 	switch (i)
 	{
@@ -164,9 +184,6 @@ void GameManager::InitializeGame(int i)
 }
 void GameManager::RestartGame()
 {
-
-	
-	
 	//ni¿ej do zmiany poziomu 
 	/*for (auto& background : close_background) {
 		delete background;
@@ -319,6 +336,15 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 			case 12:
 				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1));
 				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y)));
+				break;
+			case 13:
+				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1, 1, 0));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 32 * scale1.y),1,0));
+				break;
+			case 14:
+				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1,0,1));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y), 0, 1));
+
 				break;
 			}
 
