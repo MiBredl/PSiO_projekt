@@ -1,5 +1,5 @@
 #include "Platform.h"
-
+#include "GameManager.h"
 
 
 Platform::Platform(GameManager*_gameMeneger,string _textname,Vector2f startingpos, Vector2f scale)
@@ -13,6 +13,78 @@ Platform::Platform(GameManager*_gameMeneger,string _textname,Vector2f startingpo
 	
 	sprite->setScale(scale);
 	sprite->setPosition(startingpos);
+}
+
+Platform::Platform(GameManager* _gameMeneger, string _textname, Vector2f startingpos, Vector2f scale,bool is_moving,bool is_dissapear)
+{
+	m_GameManager = _gameMeneger;
+	sprite = new Sprite;
+
+	loadTextures();
+	setTextures(_textname);
+	startingPos = startingpos.x;
+	isMoving = is_moving;
+	isDissapear = is_dissapear;
+	sprite->setScale(scale);
+	sprite->setPosition(startingpos);
+
+
+}
+
+void Platform::platformUpdate()
+{
+	if (this != nullptr)
+	{
+		if (isMoving)
+		{
+			if (movingR)
+			{
+				sprite->move(speed, 0);
+			}
+			if (!movingR)
+			{
+				sprite->move(-speed, 0);
+			}
+
+		if (sprite->getPosition().x >= startingPos + distance && movingR)
+			movingR = false;
+		if (sprite->getPosition().x <= startingPos && !movingR)
+			movingR = true;
+		}
+	
+	
+		if (isDissapear)
+		{
+			if (m_GameManager->getPlayer()->getSprite()->getGlobalBounds().intersects(sprite->getGlobalBounds()))
+				disapearing = true;
+
+			if (disapearing)
+			{
+			
+			
+				if (countdown > 0)
+				{
+					countdown--;
+					if(alpha>=50) alpha--;
+					sprite->setColor(Color(110, 75, 20, alpha));
+				}
+				if (countdown == 0)
+				{
+					isDead = true;
+				}
+			}
+		}
+	}
+}
+
+bool Platform::isDeadPlat()
+{
+	if (isDissapear && isDead)
+	{
+		return true;
+	}
+	else
+		return false;
 }
 
 void Platform::loadTextures()

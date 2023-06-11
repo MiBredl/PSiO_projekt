@@ -44,14 +44,28 @@ void Player::viewupdate()
 
 void Player::jumpControl(float deltaTime)
 {
-	platforms = m_GameManager->getPlatforms();
+	platforms = m_GameManager->getPlatRects();
 	float _displacement = m_JumpVelocity*deltaTime+0.5f*GRAVITY*deltaTime*deltaTime;
 	m_isOnGround = false;
-	
+	if(m_SideCollision) m_CollisionTime--;
 	FloatRect _PlayerHitbox = this->sprite->getGlobalBounds();
+	FloatRect _nextBounds = _PlayerHitbox;
+	_nextBounds.left += playerSpeed*direction.x ;
+	_nextBounds.top += _displacement;
+
+	sf::RectangleShape rectangle;
+	rectangle.setPosition(_nextBounds.left, _nextBounds.top);
+	rectangle.setSize(sf::Vector2f(_nextBounds.width, _nextBounds.height));
+	rectangle.setFillColor(sf::Color::Transparent);
+	rectangle.setOutlineColor(sf::Color::Red);
+	rectangle.setOutlineThickness(2.f);
+	//m_GameManager->getWindow()->draw(rectangle);
+	sf::RectangleShape rectangle2;
 	
-
-
+	if (m_SideCollision && !bounced) { 
+		bounced = true;
+		direction.x = -direction.x; 
+	}
 	if (m_IsJumping || m_IsFalling) {
 		m_isOnPlatform = false;
 		if (_displacement > 0) m_IsFalling = true;
@@ -85,33 +99,64 @@ void Player::jumpControl(float deltaTime)
 	
 	}
 	for (auto& platform : platforms) {
-		FloatRect _PlatformHitbox = platform->getGlobalBounds();
+		FloatRect _PlatformHitbox = platform->getRect();
 
-		if (_PlayerHitbox.intersects(_PlatformHitbox)) {
+		rectangle2.setPosition(_PlatformHitbox.left, _PlatformHitbox.top);
+		rectangle2.setSize(sf::Vector2f(_PlatformHitbox.width, 15)); // 20 to wysokoœæ obszaru górnej czêœci platformy
+		rectangle2.setFillColor(sf::Color::Transparent);
+		rectangle2.setOutlineColor(sf::Color::Green);
+		rectangle2.setOutlineThickness(2.f);
+		//m_GameManager->getWindow()->draw(rectangle2);
+		if (_nextBounds.intersects(_PlatformHitbox)) {
 
-				 if (_PlayerHitbox.top + _PlayerHitbox.height >= _PlatformHitbox.top 
-					&&_PlayerHitbox.top<=_PlatformHitbox.top+_PlatformHitbox.height-100) {
-					m_isOnPlatform = true;
-					m_IsFalling = false;
-					m_IsJumping = false;
-					//cout << "top" << endl;
-					m_JumpVelocity = 0.f;
-					
-					
-				}
-				 if (_PlayerHitbox.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
-					if (!m_isOnPlatform) { 
-						//cout << "bottom" << endl;
-						m_IsFalling = true;
-					m_JumpVelocity = -JUMP_VELOCITY/70;
-					}
-				 }
-				 if ((_PlayerHitbox.left <= _PlatformHitbox.left + _PlatformHitbox.width + 20
-						 && _PlayerHitbox.left + _PlayerHitbox.width >= _PlatformHitbox.left - 20)) {
-					// cout << "side" << endl;
-					 m_SideCollision = true;
-				 }
+
+
+			if (_nextBounds.top + _nextBounds.height >= _PlatformHitbox.top
+				&& _nextBounds.top + _nextBounds.height <= _PlatformHitbox.top + 18
+				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left 
+				&& _nextBounds.left <= _PlatformHitbox.left + _PlatformHitbox.width) {
+				 platform->setActive(false);
+				 sprite->setPosition(sprite->getPosition().x,platform->getRect().top-_PlayerHitbox.height);
+				m_isOnPlatform = true;
+				m_IsFalling = false;
+				m_IsJumping = false;
+				cout << "top" << endl;
+				m_JumpVelocity = 0.f;
+
+
+			}
+			else if (_nextBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height
+				&& _nextBounds.top >= _PlatformHitbox.top + _PlatformHitbox.height - 10) {
+
+				cout << "bottom" << endl;
+				m_IsFalling = true;
+				m_JumpVelocity = -JUMP_VELOCITY / 7;
+
+			}
+			else if ((_nextBounds.left < _PlatformHitbox.left
+				&& _nextBounds.left + _nextBounds.width <= _PlatformHitbox.left + _PlatformHitbox.width)
+				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
+					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top) ) {
+				
+
+				sprite->setPosition(_PlatformHitbox.left - _PlayerHitbox.width, _PlayerHitbox.top+_displacement);
+
+				m_SideCollision = true;
+				m_CollisionTime = 45;
+			}
+			else if ((_nextBounds.left > _PlatformHitbox.left
+				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left + _PlatformHitbox.width)
+				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
+					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top )) {
+				
+				sprite->setPosition(_PlatformHitbox.left + _PlatformHitbox.width-10, _PlayerHitbox.top+_displacement);
+				m_SideCollision = true;
+				m_CollisionTime = 45;
+
+			}
+			if (platform->getIsMoving()) this->sprite->setPosition(sprite->getPosition().x + platform->getCurrentSpeed(), sprite->getPosition().y);
 		}
+		else platform->setActive(false);
 			
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)&&!isDead&&(!m_IsFalling||!m_IsJumping)) {
@@ -121,36 +166,36 @@ void Player::jumpControl(float deltaTime)
 		}
 
 	}
-	
+	if (m_CollisionTime <= 0) m_SideCollision = false;
+		
+	//cout << direction.x << endl;
+	//cout << m_SideCollision << endl;
 	//std::cout <<"jv: " << m_JumpVelocity<< std::endl;
 	//std::cout <<"fall: " << m_IsFalling<< std::endl;
-	m_SideCollision = false;
+//	m_SideCollision = false;
 }
 
 
 void Player::movement(float _deltaTime)
 {
 	direction = { 0,0 };
-
+	
 	
 	if (!isDead) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			direction.y = 1;
-
-		}
-		if (!m_SideCollision) {
+		
+		
 			
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 				direction.x = -1;
 				sprite->setOrigin(sprite->getGlobalBounds().width / 2, 0.f);
 				sprite->setScale(-2.5, 2.5);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 				direction.x = 1;
 				sprite->setOrigin(0.f, 0.f);
 				sprite->setScale(2.5, 2.5);
-			}
 		}
+		
 		if (direction == sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			setAnimation("IDLE");
 		}
@@ -158,9 +203,10 @@ void Player::movement(float _deltaTime)
 			setAnimation("RUN");
 			sprite->move(direction.x * playerSpeed, 0);
 		}
+		
 
 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !m_IsFalling && !m_IsJumping) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)  &&m_isOnPlatform) {
 				if (!m_AnimationTime) {
 					m_AnimationTime = _deltaTime;
 					setAnimation("ATTACK");
@@ -221,10 +267,10 @@ void Player::loadAnimations()
 {
 	addAnimation( new Animation("RUN","textures/player/Colour1/NoOutline/120x80_PNGSheets/Run3.png", { 32,38 }, 10));
 	addAnimation( new Animation("DEATH","textures/player/Colour1/NoOutline/120x80_PNGSheets/Death3.png", { 120,39 }, 10));
-	addAnimation( new Animation("IDLE","textures/player/Colour1/NoOutline/120x80_PNGSheets/Idle3.png", { 19,37 }, 10));
+	addAnimation( new Animation("IDLE","textures/player/Colour1/NoOutline/120x80_PNGSheets/Idle3.png", { 19,38 }, 10));
 	addAnimation( new Animation("JUMP","textures/player/Colour1/NoOutline/120x80_PNGSheets/Jump3.png", { 23,37 }, 3));
 	addAnimation( new Animation("FALL","textures/player/Colour1/NoOutline/120x80_PNGSheets/Fall3.png", { 27,37 }, 3));
-	addAnimation( (new AttackAnimation("ATTACK","textures/player/Colour1/NoOutline/120x80_PNGSheets/Attack3.png", { 71,42 }, 4))->addHitbox({ 1,2 }));
+	addAnimation( (new AttackAnimation("ATTACK","textures/player/Colour1/NoOutline/120x80_PNGSheets/Attack3.png", { 71,38 }, 4))->addHitbox({ 1,2 }));
 }
 
 
@@ -239,7 +285,6 @@ void Player::update(float deltaTime, sf::RenderTarget* window)
 	HealthBarManager();
 	jumpControl(deltaTime);
 	movement(deltaTime);
-	
 }
 
 void Player::HealthBarManager()

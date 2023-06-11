@@ -13,6 +13,7 @@ protected:
 	sf::Clock clock;
 	sf::Vector2i direction = { 0,0 };	
 	
+
 	float m_outputDamage;
 	float m_HP;
 	float m_TotalTime;

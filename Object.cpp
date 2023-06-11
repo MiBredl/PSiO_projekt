@@ -25,3 +25,8 @@ void Object::addTextures(Textures* _text)
 
 	this->m_Texture.insert(pair<string, Textures*>(_text->getName(), _text));
 }
+
+void Object::setColor(Color& color)
+{
+	sprite->setColor(color);
+}
