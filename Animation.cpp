@@ -33,7 +33,7 @@ void Animation::reload()
 
 void Animation::pause()
 {
-	m_iTotalTime = 0;
+	m_iTotalTime = -1000;
 	m_iCurrentFrame = m_iFramesCount - 1;
 }
 

@@ -16,32 +16,26 @@ Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos):type(type)
 	m_HP = 1;
 	sprite = new sf::Sprite;
 	loadAnimations();
-	/*addAnimation((new AttackAnimation("ATTACK", m_Path + m_EnemyType[type] + "/Attack.png", { 150,150 }, 8))->addHitbox({6,7}));
-	addAnimation(new Animation("MOVE", m_Path+m_EnemyType[type]+"/Run.png", {150,150}, 4 ));
-	addAnimation(new Animation("IDLE", m_Path+m_EnemyType[type]+"/Idle.png", {150,150}, 4 ));
-	addAnimation(new Animation("DEATH", m_Path+m_EnemyType[type]+"/Death.png", {150,150}, 4 ));*/
+	//cout << "NEW ENEMY\n";
 	
 
 	setAnimation("MOVE");
 
 	sprite->setScale(1.5, 1.5);
 	sprite->setPosition(_startpos);
-	platforms = m_GameManager->getPlatforms();
+	platforms = m_GameManager->getPlatRects();
 }
 
 void Enemy::movement(float _deltaTime)
 {
-	
 
-
-
-	////////////
 	if (!isDead) {
 		
 		sf::Sprite* _PlayerSprite = m_GameManager->getPlayer()->getSprite();
 		
 		
 		if (!m_GameManager->getPlayer()->isDead) {
+
 			if (_PlayerSprite->getGlobalBounds().top+60 >= this->sprite->getGlobalBounds().top 
 				&& _PlayerSprite->getGlobalBounds().top <= this->sprite->getGlobalBounds().top + this->sprite->getGlobalBounds().height) {
 
@@ -94,6 +88,7 @@ void Enemy::movement(float _deltaTime)
 
 void Enemy::update(float deltaTime, sf::RenderTarget* window)
 {
+	//cout << sprite->getPosition().y<<endl;
 	movement(deltaTime);
 	fallControll(deltaTime);
 
@@ -101,7 +96,7 @@ void Enemy::update(float deltaTime, sf::RenderTarget* window)
 
 void Enemy::fallControll(float _deltaTime)
 {
-	platforms = m_GameManager->getPlatforms();
+	platforms = m_GameManager->getPlatRects();
 	float _displacement = m_JumpVelocity * _deltaTime + 0.5f * GRAVITY * _deltaTime * _deltaTime;
 	//m_isOnGround = false;
 	FloatRect _EnemyBounds = sprite->getGlobalBounds();
@@ -127,13 +122,14 @@ void Enemy::fallControll(float _deltaTime)
 
 	}
 	for (auto& platform : platforms) {
-		FloatRect _PlatformHitbox = platform->getGlobalBounds();
+		FloatRect _PlatformHitbox = platform->getRect();
 
 		if (_EnemyBounds.intersects(_PlatformHitbox)) {
 
 			if (_EnemyBounds.top + _EnemyBounds.height >= _PlatformHitbox.top
 				&& _EnemyBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
 				m_isOnPlatform = true;
+				sprite->setPosition(sprite->getPosition().x, platform->getRect().top - _EnemyBounds.height);
 				m_IsFalling = false;
 
 				//cout << "top" << endl;

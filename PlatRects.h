@@ -17,22 +17,30 @@ private:
 	int countdown = 120;
 	float startingPos;
 	int speed = 2;
+	int m_CurrentSpeed;
 	float distance = 300;
-	
+	Vector2f m_direction = {0,0};
+//	friend class Player;
 public:
 	PlatRects(GameManager*,FloatRect);
 	PlatRects(GameManager*,FloatRect,bool,bool);
 
-
+	bool getIsMoving() {
+		return isMoving;
+	}
+	int getCurrentSpeed() {
+		return m_CurrentSpeed;
+	}
 	FloatRect getRect() {
 		return fRect;
 	}
-	GameManager* getGameMeneger() {
-		return m_GameManager;
+	void setActive(bool _state) {
+		isActive = _state;
 	}
+
 	bool isAktiveP();
 	void updatePlatRects();
 	bool isDeadPlatRects();
-
+	
 };
 

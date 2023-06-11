@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include "Healthbar.h"
 #include "UpgradeMenu.h"
+#include "PlatRects.h"
 class Player : public NPC
 {
 public:
@@ -25,13 +26,17 @@ private:
 	void collider();
 	void experienceUpdate();
 	vector<HealthBar*> m_HealthPoints;
-	vector<Platform*> platforms;
+	vector<PlatRects*> platforms;
 	void loadAnimations();
 	
+	
+	bool bounced = false;
 	bool m_IsJumping = false;
 	
 	float playerSpeed;
+
 	unsigned int m_Exp;
+	int m_CollisionTime = 10;
 	friend class UpgradeMenu;
 };
 

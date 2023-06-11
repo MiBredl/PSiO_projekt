@@ -15,19 +15,20 @@ Platform::Platform(GameManager*_gameMeneger,string _textname,Vector2f startingpo
 	sprite->setPosition(startingpos);
 }
 
-Platform::Platform(GameManager* _gameMeneger, string _textname, Vector2f startingpos, Vector2f scale,bool is_moving,bool is_dissapear)
+Platform::Platform(GameManager* _gameMeneger, string _textname, Vector2f startingpos, Vector2f scale,bool is_moving,bool is_dissapear,bool _movingVertical)
 {
 	m_GameManager = _gameMeneger;
 	sprite = new Sprite;
 
 	loadTextures();
 	setTextures(_textname);
-	startingPos = startingpos.x;
+	startingPos = startingpos;
 	isMoving = is_moving;
 	isDissapear = is_dissapear;
+	isMovingVertical = _movingVertical;
+	
 	sprite->setScale(scale);
 	sprite->setPosition(startingpos);
-
 
 }
 
@@ -35,22 +36,44 @@ void Platform::platformUpdate()
 {
 	if (this != nullptr)
 	{
-		if (isMoving)
-		{
-			if (movingR)
+		
+			if (isMoving)
 			{
-				sprite->move(speed, 0);
-			}
-			if (!movingR)
-			{
-				sprite->move(-speed, 0);
-			}
+				if (movingR)
+				{
+					sprite->move(speed, 0);
+				}
+				if (!movingR)
+				{
+					sprite->move(-speed, 0);
+				}
 
-		if (sprite->getPosition().x >= startingPos + distance && movingR)
-			movingR = false;
-		if (sprite->getPosition().x <= startingPos && !movingR)
-			movingR = true;
-		}
+				if (sprite->getPosition().x >= startingPos.x + distance.x && movingR)
+					movingR = false;
+				if (sprite->getPosition().x <= startingPos.x && !movingR)
+					movingR = true;
+			}
+			if (isMovingVertical)
+			{
+				/*if (movingUp)
+				{
+					sprite->move(0, -speed);
+				}
+				else
+				{
+					sprite->move(0, speed);
+				}
+
+				if (sprite->getPosition().y + sprite->getGlobalBounds().height <= startingPos.y + distance.y && movingUp)
+				{
+					movingUp = false;
+					cout << "?\n";
+				}
+				else if (sprite->getPosition().y + sprite->getGlobalBounds().height >= startingPos + distance && !movingUp)
+				{
+					movingUp = true;
+				}*/
+			}
 	
 	
 		if (isDissapear)
@@ -59,13 +82,12 @@ void Platform::platformUpdate()
 				disapearing = true;
 
 			if (disapearing)
-			{
-				Color color;
-				sprite->setColor(color);
+			{	
 				if (countdown > 0)
 				{
 					countdown--;
-					color.a--;
+					if(alpha>=50) alpha--;
+					sprite->setColor(Color(110, 75, 20, alpha));
 				}
 				if (countdown == 0)
 				{

@@ -1,5 +1,5 @@
 #include "GameManager.h"
-
+#include <random>
 
 
 GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
@@ -11,8 +11,9 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 	
 
 	//Tu masz to wczytywanie œwiata (1 i 2) do wpisania jeszcze jest w lini 44
-	InitializeGame(2);
-
+	InitializeGame(1);
+	/*loadWorld2();
+	worldGenE(0, enemies, world2);*/
 	m_UpgradeMenu = new UpgradeMenu(*this);
 	m_MainMenu = new MainMenu(*this);
 	update();
@@ -39,7 +40,7 @@ void GameManager::update()
 		if (m_CurrentState== GAME_ENUMS::GAMESTATE::RESTART) {
 			//cout << "RESTART\n";
 			RestartGame();
-			InitializeGame(2);
+			InitializeGame(1);
 			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
 		}
 		
@@ -81,17 +82,12 @@ void GameManager::update()
 			}
 			
 			if (m_Player != nullptr) m_Player->render(m_Window, deltaTime);
-			if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
+			//if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
 			for (const auto& enemy_ : enemies)
 			{
 				enemy_->render(m_Window, deltaTime);
 			}
-			if (enemies.size() != 0)
-			{
-				for (const auto& _enem : enemies) {
-					_enem->update(deltaTime, m_Window);
-				}
-			}
+
 			for (const auto& front_amb : f_ambients)
 			{
 				front_amb->renderPlat(m_Window);
@@ -103,26 +99,22 @@ void GameManager::update()
 			for (auto& rect : rectangles)
 			{
 				//zakomentuj to i prostok¹ty znikn¹
-				if (rect != nullptr) m_Window->draw(*rect);
+			//	if (rect != nullptr) m_Window->draw(*rect);
 			}
 			for (int i = 0; i < platRects.size();)
 			{
-				rectangles.push_back(new RectangleShape(Vector2f(platRects[i]->getRect().width, platRects[i]->getRect().height)));
-				rectangles[i]->setPosition(Vector2f(platRects[i]->getRect().left, platRects[i]->getRect().top));
+				/*rectangles.push_back(new RectangleShape(Vector2f(platRects[i]->getRect().width, platRects[i]->getRect().height)));
+				rectangles[i]->setPosition(Vector2f(platRects[i]->getRect().left, platRects[i]->getRect().top));*/
 				platRects[i]->updatePlatRects();
 
 				if (platRects[i]->isDeadPlatRects())
 				{
 					delete platRects[i];
 					platRects.erase(platRects.begin() + i);
-					rectangles.erase(rectangles.begin() + i);
+					//rectangles.erase(rectangles.begin() + i);
 				}
 				else
 				{
-					if (platRects[i]->isAktiveP())
-						rectangles[i]->setFillColor(Color::Blue);
-					else
-						rectangles[i]->setFillColor(Color::Red);
 
 					i++;
 				}
@@ -226,8 +218,8 @@ void GameManager::loadWorld1()
 }
 void GameManager::loadWorld2()
 {
-	Color color(220, 80, 20);
-	Color color2(220, 20, 20);
+	Color color(110, 75, 20);
+	Color color2(175, 40, 30);
 	tie(platforms, f_ambients, b_ambients, close_background, platRects) = worldGen(0, platforms, f_ambients, b_ambients, close_background, platRects, world2);
 
 	loadBackground();
@@ -250,7 +242,7 @@ void GameManager::loadWorld2()
 }
 void GameManager::loadBackground()
 {
-	far_background.push_back(new Ambient(this, "Sky", { 0,440 }, { 10,5.25 }, 4, 1));
+	far_background.push_back(new Ambient(this, "Sky", { 0,440 }, { 11,5.25 }, 4, 1));
 	far_background.push_back(new Ambient(this, "MoutainsFar", { 0,440 }, { 6,5.25 }, 4, 0.9));
 	far_background.push_back(new Ambient(this, "MoutainsClose", { 0,440 }, { 6,5.25 }, 4, 0.8));
 	far_background.push_back(new Ambient(this, "cloudsMidde", { 0,440 }, { 6,5.25 }, 4, 0.7));
@@ -331,21 +323,23 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 				break;
 			case 11:
 				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 32 * scale1.y)));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 30 * scale1.y)));
 				break;
 			case 12:
 				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y)));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 30 * scale1.y)));
 				break;
 			case 13:
-				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1, 1, 0));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 32 * scale1.y),1,0));
+				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1, 1, 0, 0));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 30 * scale1.y),1,0));
 				break;
 			case 14:
-				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1,0,1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y), 0, 1));
+				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1,0,1, 0));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 30 * scale1.y), 0, 1));
 
 				break;
+			case 15:
+				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1, 0, 0, 1));
 			}
 
 			switch (in_vec[i][j][1])
@@ -415,7 +409,7 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 				break;
 			}
 
-			f_starting_pos += 40 * scale1.x;
+			f_starting_pos += 39 * scale1.x;
 		}
 	}
 
@@ -423,31 +417,38 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 }
 vector<Enemy*> GameManager::worldGenE(int starting_pos, vector<Enemy*>& evec, vector<vector<vector<int>>>& in_vec)
 {
+	auto getRandomNumber = []() {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::discrete_distribution<> dist({ 0.5, 0.1667, 0.1667, 0.1667 });
+		return dist(gen);
+	};
 	for (int i = 0; i < in_vec.size(); i++)
 	{
 		float f_starting_pos = starting_pos;
 		for (int j = 0; j < in_vec[i].size(); j++)
 		{
 			float y = 80;
-			switch (in_vec[i][j][3])
+			int randomNumber = getRandomNumber();
+			if(in_vec[i][j][3]==1){
+			if (randomNumber == 0)
 			{
-			case 1:
-				evec.push_back(new Enemy(1, this, { f_starting_pos,y * i - 60 }));
-				break;
-			case 2:
-				evec.push_back(new Enemy(2, this, { f_starting_pos,y * i - 60 }));
-				break;
-			case 3:
-				evec.push_back(new Enemy(3, this, { f_starting_pos,y * i - 60 }));
-				break;
-
-			case 4:
-				//evec.push_back(new Enemy(4,this, { f_starting_pos,y * i }));
-				break;
+					
 			}
-
-
-			f_starting_pos += 80;
+			else if (randomNumber == 1)
+			{
+				evec.push_back(new Enemy(1, this, { f_starting_pos,y * i - 60 }));
+			}
+			else if (randomNumber == 2)
+			{
+				evec.push_back(new Enemy(2, this, { f_starting_pos,y * i - 60 }));
+			}
+			else if (randomNumber == 3)
+			{
+				evec.push_back(new Enemy(3, this, { f_starting_pos,y * i - 60 }));
+			}
+			}
+			f_starting_pos += 78;
 		}
 	}
 	return evec;

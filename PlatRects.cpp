@@ -21,13 +21,6 @@ PlatRects::PlatRects(GameManager* _gameM, FloatRect _rect, bool _ismoving, bool 
 
 bool PlatRects::isAktiveP()
 {
-	if (m_GameManager->getPlayer()->getSprite()->getGlobalBounds().intersects(fRect))
-	{
-		isActive = true;
-	}
-	else
-		isActive = false;
-
 	if (isActive)
 		return true;
 	else
@@ -52,16 +45,14 @@ void PlatRects::updatePlatRects()
 	{
 		if (movingR)
 		{
-			fRect.left += 2;
-			fRect.width += 2;
+			m_direction.x = 1;
 		}
-			
-		if (!movingR)
+		else
 		{
-			fRect.left -= 2;
-			fRect.width -= 2;
+			m_direction.x = -1;
 		}
-
+		m_CurrentSpeed = m_direction.x * speed;
+		fRect.left += m_CurrentSpeed;
 		if (fRect.left >= startingPos + distance && movingR)
 			movingR = false;
 		if (fRect.left <= startingPos && !movingR)
