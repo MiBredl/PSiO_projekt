@@ -36,12 +36,11 @@ void Enemy::movement(float _deltaTime)
 		
 		if (!m_GameManager->getPlayer()->isDead) {
 
-			if (_PlayerSprite->getGlobalBounds().top+60 >= this->sprite->getGlobalBounds().top 
-				&& _PlayerSprite->getGlobalBounds().top <= this->sprite->getGlobalBounds().top + this->sprite->getGlobalBounds().height) {
-
+			
+			if (onActive) {
 				if (_PlayerSprite->getGlobalBounds().left + _PlayerSprite->getGlobalBounds().width <= this->sprite->getGlobalBounds().left) {
 					direction.x = -1;
-					this->sprite->setOrigin(sprite->getGlobalBounds().width / 2, 0.f);
+					this->sprite->setOrigin(sprite->getLocalBounds().width / 2, 0);
 					this->sprite->setScale(-1.5, 1.5);
 				}
 				if (_PlayerSprite->getGlobalBounds().left >= this->sprite->getGlobalBounds().left + this->sprite->getGlobalBounds().width) {
@@ -49,33 +48,37 @@ void Enemy::movement(float _deltaTime)
 					this->sprite->setOrigin(0.f, 0.f);
 					this->sprite->setScale(1.5, 1.5);
 				}
-				
-				if (sprite->getGlobalBounds().intersects(_PlayerSprite->getGlobalBounds())){
-					
+
+				if (sprite->getGlobalBounds().intersects(_PlayerSprite->getGlobalBounds())) {
+
 					direction.x = 0.f;
-						if (!m_AnimationTime) {
-							m_AnimationTime = _deltaTime;
-							setAnimation("ATTACK");
-						}
+					if (!m_AnimationTime) {
+						m_AnimationTime = _deltaTime;
+						setAnimation("ATTACK");
+					}
 					AttackAnimation* attackAnimation = dynamic_cast<AttackAnimation*>(getAnimation());
-					if (attackAnimation != nullptr) 
-					for (int frame : attackAnimation->getHitboxes()) 
-						if (frame == attackAnimation->getCurrentFrame()) {
-							m_GameManager->getPlayer()->damageManager(m_outputDamage);
-							break;
-						}
+					if (attackAnimation != nullptr)
+						for (int frame : attackAnimation->getHitboxes())
+							if (frame == attackAnimation->getCurrentFrame()) {
+								m_GameManager->getPlayer()->damageManager(m_outputDamage);
+								break;
+							}
 				}
-				else { 
+				else {
 					if (direction.x != 0) setAnimation("MOVE");
 					else setAnimation("IDLE");
 				}
 			}
-			else direction.x = 0;
-			if (m_CurrentAnimation->getName() != "ATTACK" && direction.x == 0.f) setAnimation("IDLE");
+			else {
+				setAnimation("IDLE");
+				direction.x = 0;
+			}
+			
+			//if (m_CurrentAnimation->getName() != "ATTACK" && direction.x == 0.f) setAnimation("IDLE");
 			
 		}
 		else setAnimation("IDLE");
-		this->sprite->move(direction.x * .7f,0 );
+		this->sprite->move(direction.x * type,0 );
 	}
 	else {
 		if (m_CurrentAnimation->getCurrentFrame() != m_CurrentAnimation->getFrameCount()-1) {
@@ -88,7 +91,7 @@ void Enemy::movement(float _deltaTime)
 
 void Enemy::update(float deltaTime, sf::RenderTarget* window)
 {
-	//cout << sprite->getPosition().y<<endl;
+	
 	movement(deltaTime);
 	fallControll(deltaTime);
 
@@ -123,15 +126,17 @@ void Enemy::fallControll(float _deltaTime)
 	}
 	for (auto& platform : platforms) {
 		FloatRect _PlatformHitbox = platform->getRect();
-
+		
 		if (_EnemyBounds.intersects(_PlatformHitbox)) {
-
+			
+			
 			if (_EnemyBounds.top + _EnemyBounds.height >= _PlatformHitbox.top
-				&& _EnemyBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height) {
+				&& _EnemyBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height-30) {
 				m_isOnPlatform = true;
 				sprite->setPosition(sprite->getPosition().x, platform->getRect().top - _EnemyBounds.height);
 				m_IsFalling = false;
-
+				if (platform->isActive) onActive = true;
+				else onActive = false;
 				//cout << "top" << endl;
 				m_JumpVelocity = 0.f;
 

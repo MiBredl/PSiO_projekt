@@ -8,7 +8,7 @@ class PlatRects
 private:
 	class GameManager* m_GameManager;
 	FloatRect fRect;
-	bool isActive = false;	
+		
 	bool isMoving = false;
 	bool isDissapear = false;
 	bool movingR = false;
@@ -24,7 +24,7 @@ private:
 public:
 	PlatRects(GameManager*,FloatRect);
 	PlatRects(GameManager*,FloatRect,bool,bool);
-
+	bool isActive = false;
 	bool getIsMoving() {
 		return isMoving;
 	}
@@ -34,10 +34,8 @@ public:
 	FloatRect getRect() {
 		return fRect;
 	}
-	void setActive(bool _state) {
-		isActive = _state;
-	}
 
+	
 	bool isAktiveP();
 	void updatePlatRects();
 	bool isDeadPlatRects();

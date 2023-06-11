@@ -15,6 +15,7 @@ public:
 	bool gaveExp;
 
 private:
+	bool onActive = false;
 	int type;
 	void loadAnimations();
 	vector<PlatRects*> platforms;

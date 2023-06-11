@@ -28,7 +28,7 @@ private:
 	vector<HealthBar*> m_HealthPoints;
 	vector<PlatRects*> platforms;
 	void loadAnimations();
-	
+	Transform transform;
 	
 	bool bounced = false;
 	bool m_IsJumping = false;

@@ -11,9 +11,9 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 	
 
 	//Tu masz to wczytywanie œwiata (1 i 2) do wpisania jeszcze jest w lini 44
-	InitializeGame(2);
-	loadWorld2();
-	worldGenE(0, enemies, world2);
+	InitializeGame(1);
+	//loadWorld2();
+	//worldGenE(0, enemies, world2);
 	m_UpgradeMenu = new UpgradeMenu(*this);
 	m_MainMenu = new MainMenu(*this);
 	update();
@@ -40,7 +40,7 @@ void GameManager::update()
 		if (m_CurrentState== GAME_ENUMS::GAMESTATE::RESTART) {
 			//cout << "RESTART\n";
 			RestartGame();
-			InitializeGame(2);
+			InitializeGame(1);
 			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
 		}
 		
@@ -164,7 +164,7 @@ void GameManager::InitializeGame(int i)
 	m_Clock = new sf::Clock;
 	m_Player = new Player(this);	
 	m_DeathMenu = new DeathMenu(*this);
-	/*switch (i)
+	switch (i)
 	{
 	case 1:
 		loadWorld1();
@@ -174,7 +174,7 @@ void GameManager::InitializeGame(int i)
 		loadWorld2();
 		worldGenE(0, enemies, world2);
 		break;
-	}*/
+	}
 
 	
 }
@@ -411,7 +411,7 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 				break;
 			}
 
-			f_starting_pos += 40 * scale1.x;
+			f_starting_pos += 39 * scale1.x;
 		}
 	}
 

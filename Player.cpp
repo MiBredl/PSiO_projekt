@@ -115,14 +115,14 @@ void Player::jumpControl(float deltaTime)
 				&& _nextBounds.top + _nextBounds.height <= _PlatformHitbox.top + 18
 				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left 
 				&& _nextBounds.left <= _PlatformHitbox.left + _PlatformHitbox.width) {
-				 platform->setActive(false);
+				 platform->isActive=true;
 				 sprite->setPosition(sprite->getPosition().x,platform->getRect().top-_PlayerHitbox.height);
 				m_isOnPlatform = true;
 				m_IsFalling = false;
 				m_IsJumping = false;
 				cout << "top" << endl;
 				m_JumpVelocity = 0.f;
-
+				if (platform->getIsMoving()) this->sprite->setPosition(sprite->getPosition().x + platform->getCurrentSpeed(), sprite->getPosition().y);
 
 			}
 			else if (_nextBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height
@@ -149,14 +149,14 @@ void Player::jumpControl(float deltaTime)
 				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
 					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top )) {
 				
-				sprite->setPosition(_PlatformHitbox.left + _PlatformHitbox.width-10, _PlayerHitbox.top+_displacement);
+				sprite->setPosition(_PlatformHitbox.left + _PlatformHitbox.width+_PlayerHitbox.width/2, _PlayerHitbox.top+_displacement);
 				m_SideCollision = true;
 				m_CollisionTime = 45;
 
 			}
-			if (platform->getIsMoving()) this->sprite->setPosition(sprite->getPosition().x + platform->getCurrentSpeed(), sprite->getPosition().y);
+			
 		}
-		else platform->setActive(false);
+		else platform->isActive=false;
 			
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)&&!isDead&&(!m_IsFalling||!m_IsJumping)) {
@@ -187,13 +187,15 @@ void Player::movement(float _deltaTime)
 			
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 				direction.x = -1;
-				sprite->setOrigin(sprite->getGlobalBounds().width / 2, 0.f);
+				sprite->setOrigin(sprite->getLocalBounds().width / 2, 0);
 				sprite->setScale(-2.5, 2.5);
+				
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 				direction.x = 1;
 				sprite->setOrigin(0.f, 0.f);
 				sprite->setScale(2.5, 2.5);
+				
 		}
 		
 		if (direction == sf::Vector2i(0, 0) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
