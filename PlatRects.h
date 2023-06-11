@@ -8,7 +8,7 @@ class PlatRects
 private:
 	class GameManager* m_GameManager;
 	FloatRect fRect;
-	bool isActive = false;	
+	
 	bool isMoving = false;
 	bool isDissapear = false;
 	bool movingR = false;
@@ -22,6 +22,7 @@ private:
 	Vector2f m_direction = {0,0};
 //	friend class Player;
 public:
+	bool isActive = false;
 	PlatRects(GameManager*,FloatRect);
 	PlatRects(GameManager*,FloatRect,bool,bool);
 

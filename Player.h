@@ -9,30 +9,30 @@ class Player : public NPC
 {
 public:
 	Player(GameManager*);
-	
+
 	void viewupdate();
 	void jumpControl(float);
 	void movement(float);
-	
-	float getHP(){
+
+	float getHP() {
 		return m_HP;
 	}
-	
+
 	void update(float, sf::RenderTarget*);
 	void HealthBarManager();
-	
+
 private:
-	
+
 	void collider();
 	void experienceUpdate();
 	vector<HealthBar*> m_HealthPoints;
 	vector<PlatRects*> platforms;
 	void loadAnimations();
-	
-	
+	Transform transform;
+
 	bool bounced = false;
 	bool m_IsJumping = false;
-	
+
 	float playerSpeed;
 
 	unsigned int m_Exp;

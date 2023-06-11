@@ -92,15 +92,6 @@ void GameManager::update()
 			{
 				front_amb->renderPlat(m_Window);
 			}
-			for (auto& rect : platRects)
-			{
-				//cout << rect->getRect().left << " " << rect->getRect().top << " " << rect->getRect().width << " " << rect->getRect().height << endl;
-			}
-			for (auto& rect : rectangles)
-			{
-				//zakomentuj to i prostok¹ty znikn¹
-			//	if (rect != nullptr) m_Window->draw(*rect);
-			}
 			for (int i = 0; i < platRects.size();)
 			{
 				/*rectangles.push_back(new RectangleShape(Vector2f(platRects[i]->getRect().width, platRects[i]->getRect().height)));
