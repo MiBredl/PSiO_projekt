@@ -1,16 +1,14 @@
 #include "GameManager.h"
+#include <random>
 
 
-
-GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING), m_CurrentWorld(2)
+GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING), m_CurrentWorld(1)
 {
 
 	m_Window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT),"SUS SOULS");
 	m_Window->setFramerateLimit(60);
 	view.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	
-
-	//Tu masz to wczytywanie œwiata (1 i 2) do wpisania jeszcze jest w lini 44
 	InitializeGame(m_CurrentWorld);
 
 	m_UpgradeMenu = new UpgradeMenu(*this);
@@ -25,9 +23,7 @@ void GameManager::update()
 	while (m_Window->isOpen()) {
 		eventManager();
 		view.setCenter(m_Player->getSprite()->getPosition().x, WINDOW_HEIGHT / 2);
-		m_Window->clear();
-		//cout <<"CURRENT STATE: " << m_CurrentState << endl;
-		
+		m_Window->clear();		
 		if (m_MainMenu != nullptr ) {
 			m_MainMenu->handleInput();
 			if (m_CurrentState == GAME_ENUMS::GAMESTATE::PAUSED) { 
@@ -276,13 +272,12 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 				pvec.push_back(new Platform(this, "CliffRockLeft", { f_starting_pos - 2,y * i }, scale1));
 				break;
 			case 6:
-				pvec.push_back(new Platform(this, "PlatSmall", { f_starting_pos - 1,y * i }, scale1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos - 1, y * i, 40 * scale1.x, 39 * scale1.y)));
+				pvec.push_back(new Platform(this, "PlatSmall", { f_starting_pos - 1,y * i - 10 }, scale1));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos - 1, y * i - 10, 40 * scale1.x, 39 * scale1.y)));
 				break;
 			case 7:
 				pvec.push_back(new Platform(this, "PlatBig", { f_starting_pos - 10,y * i }, scale1));
 				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos - 10, y * i, 98 * scale1.x, 76 * scale1.y)));
-				//cout << f_starting_pos - 1 << " " << y * i << " " << 98 * scale1.x << " " << 76 * scale1.y << endl;
 				break;
 			case 8:
 				platsize.x = 0;
@@ -306,21 +301,23 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 				break;
 			case 11:
 				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 32 * scale1.y)));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 30 * scale1.y)));
 				break;
 			case 12:
 				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y)));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 30 * scale1.y)));
 				break;
 			case 13:
-				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1, 1, 0));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 32 * scale1.y),1,0));
+				pvec.push_back(new Platform(this, "PlatRockBig", { f_starting_pos,y * i - 20 }, scale1, 1, 0, 0));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 48 * scale1.x, 30 * scale1.y), 1, 0));
 				break;
 			case 14:
-				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1,0,1));
-				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 32 * scale1.y), 0, 1));
+				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1, 0, 1, 0));
+				rect.push_back(new PlatRects(this, FloatRect(f_starting_pos, y * i - 20, 32 * scale1.x, 30 * scale1.y), 0, 1));
 
 				break;
+			case 15:
+				pvec.push_back(new Platform(this, "PlatRockSmall", { f_starting_pos,y * i - 20 }, scale1, 0, 0, 1));
 			}
 
 			switch (in_vec[i][j][1])
@@ -364,10 +361,10 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 				bavec.push_back(new Ambient(this, "FenceRight", { f_starting_pos - 17,y * i + 25 }, scale1));
 				break;
 			case 11:
-				bavec.push_back(new Ambient(this, "Door", { f_starting_pos,y * i-100 }, { 0.25,0.20 }, true));
+				bavec.push_back(new Ambient(this, "Door", { f_starting_pos,y * i - 100 }, { 0.25,0.20 }, true));
 				break;
 			}
-			
+
 
 			switch (in_vec[i][j][2])
 			{
@@ -398,31 +395,38 @@ tuple<vector<Platform*>, vector<Ambient*>, vector<Ambient*>, vector<Ambient*>, v
 }
 vector<Enemy*> GameManager::worldGenE(int starting_pos, vector<Enemy*>& evec, vector<vector<vector<int>>>& in_vec)
 {
+	auto getRandomNumber = []() {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::discrete_distribution<> dist({ 0.5, 0.1667, 0.1667, 0.1667 });
+		return dist(gen);
+	};
 	for (int i = 0; i < in_vec.size(); i++)
 	{
 		float f_starting_pos = starting_pos;
 		for (int j = 0; j < in_vec[i].size(); j++)
 		{
 			float y = 80;
-			switch (in_vec[i][j][3])
-			{
-			case 1:
-				evec.push_back(new Enemy(1, this, { f_starting_pos,y * i - 60 }));
-				break;
-			case 2:
-				evec.push_back(new Enemy(2, this, { f_starting_pos,y * i - 60 }));
-				break;
-			case 3:
-				evec.push_back(new Enemy(3, this, { f_starting_pos,y * i - 60 }));
-				break;
+			int randomNumber = getRandomNumber();
+			if (in_vec[i][j][3] == 1) {
+				if (randomNumber == 0)
+				{
 
-			case 4:
-				evec.push_back(new Enemy(4,this, { f_starting_pos,y * i }));
-				break;
+				}
+				else if (randomNumber == 1)
+				{
+					evec.push_back(new Enemy(1, this, { f_starting_pos,y * i - 60 }));
+				}
+				else if (randomNumber == 2)
+				{
+					evec.push_back(new Enemy(2, this, { f_starting_pos,y * i - 60 }));
+				}
+				else if (randomNumber == 3)
+				{
+					evec.push_back(new Enemy(3, this, { f_starting_pos,y * i - 60 }));
+				}
 			}
-
-
-			f_starting_pos += 80;
+			f_starting_pos += 78;
 		}
 	}
 	return evec;

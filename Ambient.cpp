@@ -88,10 +88,17 @@ void Ambient::updateDoor()
 {
 	if (isDoor && sprite->getGlobalBounds().intersects(m_GameManager->getPlayer()->getSprite()->getGlobalBounds()))
 	{
-		sprite->setColor(Color::Red);
+		//sprite->setColor(Color::Red);
+		if(m_GameManager->getCurrentWorld()==1)
+		{
+			m_GameManager->setCurrentWorld(2);
+			cout << "XDDD\n";
+		}
+		
 	}
 	else if (isDoor)
 	{
-		sprite->setColor(Color::Blue);
+		//sprite->setColor(Color::Blue);
 	}
+	
 }

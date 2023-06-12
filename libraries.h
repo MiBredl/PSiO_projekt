@@ -4,6 +4,7 @@
 #include<map>
 #include<algorithm>
 #include<iostream>
+#include<random>
 using namespace std;
 using namespace sf;
 namespace GAME_ENUMS {
