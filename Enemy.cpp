@@ -17,7 +17,7 @@ Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos):type(type)
 	sprite = new sf::Sprite;
 	loadAnimations();
 	//cout << "NEW ENEMY\n";
-	
+	cout << "Enemy\n";
 
 	setAnimation("MOVE");
 

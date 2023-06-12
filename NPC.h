@@ -32,7 +32,7 @@ protected:
 public:
 
 	
-
+	
 	bool isDead = false;
 	virtual void movement(float) = 0;
 	virtual void update(float, sf::RenderTarget*) = 0;

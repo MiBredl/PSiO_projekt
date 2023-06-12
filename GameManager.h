@@ -61,6 +61,7 @@ public:
 private:
 	bool repeated=false; 
 	int m_CurrentState= GAME_ENUMS::GAMESTATE::PAUSED;
+	int m_CurrentWorld;
 	sf::Clock* m_Clock;
 	sf::RenderWindow* m_Window;
 	sf::Event m_Event;

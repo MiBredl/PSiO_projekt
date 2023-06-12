@@ -3,6 +3,8 @@
 
 
 
+
+
 void NPC::render(sf::RenderTarget* window,float deltaTime)
 {
 

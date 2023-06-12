@@ -7,7 +7,7 @@ UpgradeMenu::UpgradeMenu(GameManager& _GameManager) : m_GameManager(_GameManager
 	if (!m_Font.loadFromFile("Fonts/Roboto-BlackItalic.ttf")) {
 		cerr << "UpgradeMenu font loading error\n";
 	}
-
+	
 	bufferTexts.resize(bufferShowQuantity);
 	m_ButtonSprites.resize(totalButtonQuantity);
 	m_ButtonTextures.resize(m_SpriteQuantity);
@@ -192,6 +192,9 @@ void UpgradeMenu::handleInnerInput()
 					
 				}
 				if (i == GAME_ENUMS::UPGRADE_BUTTONS::ACCEPT && !m_isOnCoolDown) {
+					for (int i = 0; i < m_BufforHP; i++) {
+						_player.m_HealthPoints.push_back(new HealthBar());
+					}
 					_player.m_HP += m_BufforHP;
 					_player.m_outputDamage += m_BufforSTRENGTH/2;
 					m_BufforHP = 0;

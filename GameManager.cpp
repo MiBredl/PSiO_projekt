@@ -2,7 +2,7 @@
 
 
 
-GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
+GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING), m_CurrentWorld(2)
 {
 
 	m_Window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT),"SUS SOULS");
@@ -11,9 +11,8 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING)
 	
 
 	//Tu masz to wczytywanie œwiata (1 i 2) do wpisania jeszcze jest w lini 44
-	InitializeGame(1);
-	//loadWorld2();
-	//worldGenE(0, enemies, world2);
+	InitializeGame(m_CurrentWorld);
+
 	m_UpgradeMenu = new UpgradeMenu(*this);
 	m_MainMenu = new MainMenu(*this);
 	update();
@@ -40,7 +39,7 @@ void GameManager::update()
 		if (m_CurrentState== GAME_ENUMS::GAMESTATE::RESTART) {
 			//cout << "RESTART\n";
 			RestartGame();
-			InitializeGame(1);
+			InitializeGame(m_CurrentWorld);
 			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
 		}
 		
@@ -82,56 +81,38 @@ void GameManager::update()
 			}
 			
 			if (m_Player != nullptr) m_Player->render(m_Window, deltaTime);
-			//if (m_Enemy != nullptr) m_Enemy->render(m_Window, deltaTime);
+			
 			for (const auto& enemy_ : enemies)
 			{
 				enemy_->render(m_Window, deltaTime);
 			}
-
+			UpdateMobs(deltaTime);
 			for (const auto& front_amb : f_ambients)
 			{
 				front_amb->renderPlat(m_Window);
 			}
-			for (auto& rect : platRects)
-			{
-				//cout << rect->getRect().left << " " << rect->getRect().top << " " << rect->getRect().width << " " << rect->getRect().height << endl;
-			}
-			for (auto& rect : rectangles)
-			{
-				//zakomentuj to i prostok¹ty znikn¹
-			//	if (rect != nullptr) m_Window->draw(*rect);
-			}
+
 			for (int i = 0; i < platRects.size();)
 			{
-				rectangles.push_back(new RectangleShape(Vector2f(platRects[i]->getRect().width, platRects[i]->getRect().height)));
-				rectangles[i]->setPosition(Vector2f(platRects[i]->getRect().left, platRects[i]->getRect().top));
+				
 				platRects[i]->updatePlatRects();
 
 				if (platRects[i]->isDeadPlatRects())
 				{
 					delete platRects[i];
-					platRects.erase(platRects.begin() + i);
-					rectangles.erase(rectangles.begin() + i);
+					platRects.erase(platRects.begin() + i);					
 				}
 				else
 				{
-					if (platRects[i]->isAktiveP())
-						rectangles[i]->setFillColor(Color::Blue);
-					else
-						rectangles[i]->setFillColor(Color::Red);
-
 					i++;
 				}
-			}
-
-			 UpdateMobs(deltaTime);
+			}		
 			 if (m_UpgradeMenu != nullptr) m_UpgradeMenu->render();
 		}
 		if (m_CurrentState == GAME_ENUMS::GAMESTATE::DEAD) {
-			//cout << "dziala\n";
+			//cout << "dziala\n";			
 			m_DeathMenu->render();
-			
-		}
+		}		
 		m_Window->display();	
 	}
 }
@@ -152,7 +133,6 @@ void GameManager::UpdateMobs(float deltaTime)
 {
 		if (m_Player != nullptr) {
 			m_Player->update(deltaTime, m_Window);
-
 		}
 		for (const auto& enemy_ : enemies)
 		{
@@ -161,7 +141,7 @@ void GameManager::UpdateMobs(float deltaTime)
 }
 void GameManager::InitializeGame(int i)
 {
-	m_Clock = new sf::Clock;
+	m_Clock = new Clock;
 	m_Player = new Player(this);	
 	m_DeathMenu = new DeathMenu(*this);
 	switch (i)
@@ -180,38 +160,37 @@ void GameManager::InitializeGame(int i)
 }
 void GameManager::RestartGame()
 {
-	//ni¿ej do zmiany poziomu 
-	/*for (auto& background : close_background) {
+	for (auto& background : close_background) {
 		delete background;
 	}
 	for (auto& background : far_background) {
 		delete background;
-	}
-	for (auto& platform : platforms) {
-		delete platform;
 	}
 	for (auto& ambient : f_ambients) {
 		delete ambient;
 	}
 	for (auto& ambient : b_ambients) {
 		delete ambient;
-	}*/
-	/*far_background.clear();
-	close_background.clear();
-	b_ambients.clear();
-	f_ambients.clear();
-	
-	*/
-
+	}
+	for (auto& platRect : platRects) {
+		delete platRect;
+	}
+	for (auto& platform : platforms) {
+		delete platform;
+	}	
 	for (auto enemy : enemies) {
 		delete enemy;
 	}
-	
-	
+	far_background.clear();
+	close_background.clear();
+	b_ambients.clear();
+	f_ambients.clear();
+	platRects.clear();
+	platforms.clear();
 	enemies.clear();
+
 	delete m_Clock;
 	delete m_Player;
-	delete m_Enemy;
 	delete m_DeathMenu;
 	
 }

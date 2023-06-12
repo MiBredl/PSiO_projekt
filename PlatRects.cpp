@@ -4,7 +4,7 @@ PlatRects::PlatRects(GameManager* _gameM,FloatRect _rect)
 {
 	m_GameManager = _gameM;
 	fRect = _rect;
-
+	
 	
 }
 

@@ -7,7 +7,7 @@
 Player::Player(GameManager* _gameManager) : playerSpeed(5)
 {
 
-	
+	cout << "Player\n";
 	iFrameTime = 0;
 	m_AnimationTime = 0;
 	m_GameManager = _gameManager;
@@ -24,20 +24,19 @@ Player::Player(GameManager* _gameManager) : playerSpeed(5)
 
 
 	for (int i = 0; i < m_HP; i++) {
-		sf::Vector2i pixelPos(i * 25, 0);
-		sf::Vector2f worldPos = m_GameManager->getWindow()->mapPixelToCoords(pixelPos);
-		m_HealthPoints.push_back(new HealthBar(worldPos));
+		
+		m_HealthPoints.push_back(new HealthBar());
 	}
 	
 }
 void Player::viewupdate()
 {
-	m_HealthPoints.clear();
+	
 
 	for (int i = 0; i < m_HP; i++) {
 		sf::Vector2i pixelPos(i * 25, 0);
 		sf::Vector2f worldPos = m_GameManager->getWindow()->mapPixelToCoords(pixelPos);
-		m_HealthPoints.push_back(new HealthBar(worldPos));
+		m_HealthPoints[i]->setPosition(worldPos);
 	}
 }
 
@@ -47,25 +46,16 @@ void Player::jumpControl(float deltaTime)
 	platforms = m_GameManager->getPlatRects();
 	float _displacement = m_JumpVelocity*deltaTime+0.5f*GRAVITY*deltaTime*deltaTime;
 	m_isOnGround = false;
-	if(m_SideCollision) m_CollisionTime--;
+	
 	FloatRect _PlayerHitbox = this->sprite->getGlobalBounds();
 	FloatRect _nextBounds = _PlayerHitbox;
 	_nextBounds.left += playerSpeed*direction.x ;
 	_nextBounds.top += _displacement;
 
-	sf::RectangleShape rectangle;
-	rectangle.setPosition(_nextBounds.left, _nextBounds.top);
-	rectangle.setSize(sf::Vector2f(_nextBounds.width, _nextBounds.height));
-	rectangle.setFillColor(sf::Color::Transparent);
-	rectangle.setOutlineColor(sf::Color::Red);
-	rectangle.setOutlineThickness(2.f);
-	//m_GameManager->getWindow()->draw(rectangle);
-	sf::RectangleShape rectangle2;
 	
-	if (m_SideCollision && !bounced) { 
-		bounced = true;
-		direction.x = -direction.x; 
-	}
+	
+	
+
 	if (m_IsJumping || m_IsFalling) {
 		m_isOnPlatform = false;
 		if (_displacement > 0) m_IsFalling = true;
@@ -101,26 +91,22 @@ void Player::jumpControl(float deltaTime)
 	for (auto& platform : platforms) {
 		FloatRect _PlatformHitbox = platform->getRect();
 
-		rectangle2.setPosition(_PlatformHitbox.left, _PlatformHitbox.top);
-		rectangle2.setSize(sf::Vector2f(_PlatformHitbox.width, 15)); // 20 to wysokoœæ obszaru górnej czêœci platformy
-		rectangle2.setFillColor(sf::Color::Transparent);
-		rectangle2.setOutlineColor(sf::Color::Green);
-		rectangle2.setOutlineThickness(2.f);
-		//m_GameManager->getWindow()->draw(rectangle2);
+		
 		if (_nextBounds.intersects(_PlatformHitbox)) {
 
 
 
 			if (_nextBounds.top + _nextBounds.height >= _PlatformHitbox.top
 				&& _nextBounds.top + _nextBounds.height <= _PlatformHitbox.top + 18
-				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left 
+				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left
 				&& _nextBounds.left <= _PlatformHitbox.left + _PlatformHitbox.width) {
-				 platform->isActive=true;
-				 sprite->setPosition(sprite->getPosition().x,platform->getRect().top-_PlayerHitbox.height);
+				platform->isActive = true;
+				sprite->setPosition(sprite->getPosition().x, platform->getRect().top - _PlayerHitbox.height);
+
 				m_isOnPlatform = true;
 				m_IsFalling = false;
 				m_IsJumping = false;
-				cout << "top" << endl;
+				//cout << "top" << endl;
 				m_JumpVelocity = 0.f;
 				if (platform->getIsMoving()) this->sprite->setPosition(sprite->getPosition().x + platform->getCurrentSpeed(), sprite->getPosition().y);
 
@@ -128,7 +114,7 @@ void Player::jumpControl(float deltaTime)
 			else if (_nextBounds.top <= _PlatformHitbox.top + _PlatformHitbox.height
 				&& _nextBounds.top >= _PlatformHitbox.top + _PlatformHitbox.height - 10) {
 
-				cout << "bottom" << endl;
+				//cout << "bottom" << endl;
 				m_IsFalling = true;
 				m_JumpVelocity = -JUMP_VELOCITY / 7;
 
@@ -136,22 +122,22 @@ void Player::jumpControl(float deltaTime)
 			else if ((_nextBounds.left < _PlatformHitbox.left
 				&& _nextBounds.left + _nextBounds.width <= _PlatformHitbox.left + _PlatformHitbox.width)
 				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
-					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top) ) {
+					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top) && m_CurrentAnimation->getName() != "ATTACK") {
 				
 
 				sprite->setPosition(_PlatformHitbox.left - _PlayerHitbox.width, _PlayerHitbox.top+_displacement);
 
-				m_SideCollision = true;
-				m_CollisionTime = 45;
+				//m_SideCollision = true;
+				
 			}
 			else if ((_nextBounds.left > _PlatformHitbox.left
 				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left + _PlatformHitbox.width)
 				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
-					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top )) {
+					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top ) && m_CurrentAnimation->getName() != "ATTACK") {
 				
 				sprite->setPosition(_PlatformHitbox.left + _PlatformHitbox.width+_PlayerHitbox.width/2, _PlayerHitbox.top+_displacement);
-				m_SideCollision = true;
-				m_CollisionTime = 45;
+				//m_SideCollision = true;
+				
 
 			}
 			
@@ -166,13 +152,7 @@ void Player::jumpControl(float deltaTime)
 		}
 
 	}
-	if (m_CollisionTime <= 0) m_SideCollision = false;
-		
-	//cout << direction.x << endl;
-	//cout << m_SideCollision << endl;
-	//std::cout <<"jv: " << m_JumpVelocity<< std::endl;
-	//std::cout <<"fall: " << m_IsFalling<< std::endl;
-//	m_SideCollision = false;
+
 }
 
 
@@ -283,14 +263,15 @@ void Player::update(float deltaTime, sf::RenderTarget* window)
 {
 	//PlatformDetection();
 	experienceUpdate();
-	viewupdate();
 	HealthBarManager();
+	viewupdate();
 	jumpControl(deltaTime);
 	movement(deltaTime);
 }
 
 void Player::HealthBarManager()
 {
+	
 	if (m_HealthPoints.size() > 0) {
 		if (isHit) {
 			m_HealthPoints.pop_back();
