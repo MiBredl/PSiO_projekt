@@ -1,0 +1,3 @@
+A,D - move
+Ctrl - jump
+Space - attack
