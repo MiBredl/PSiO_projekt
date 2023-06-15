@@ -3,8 +3,9 @@
 class Animation
 {
 public:
+
 	Animation(std::string,std::string,sf::Vector2i,int);
-	virtual ~Animation() {};
+	virtual ~Animation();
 	sf::Texture* getTexture() {
 		return texture;
 	}

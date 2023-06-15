@@ -2,7 +2,6 @@
 #include "GameManager.h"
 
 
-#include<iostream>
 
 
 
@@ -13,24 +12,36 @@ Enemy::Enemy(int type, GameManager* _gameManager, Vector2f _startpos):type(type)
 	m_AnimationTime = 0;
 	m_GameManager = _gameManager;
 	m_TotalTime = 0.4;
-	m_HP = 1;
+	m_HP = type;
 	sprite = new sf::Sprite;
+
 	loadAnimations();
 	//cout << "NEW ENEMY\n";
 	cout << "Enemy\n";
-
+	m_Bar = new EnemyBar(_startpos, {50.f,10.f});
 	setAnimation("MOVE");
 
 	sprite->setScale(1.5, 1.5);
 	sprite->setPosition(_startpos);
-	platforms = m_GameManager->getPlatRects();
+	
+}
+
+Enemy::~Enemy()
+{
+	delete sprite;
+	for (auto& pair : m_Animations) {
+		delete pair.second;
+	}
+	m_Animations.clear();
+	if(m_Bar!=nullptr) delete m_Bar;
 }
 
 void Enemy::movement(float _deltaTime)
 {
 
 	if (!isDead) {
-		
+		float HP_ratio = m_HP / type;
+		m_Bar->update({ sprite->getGlobalBounds().left,sprite->getGlobalBounds().top-10 }, HP_ratio);
 		sf::Sprite* _PlayerSprite = m_GameManager->getPlayer()->getSprite();
 		
 		
@@ -74,7 +85,6 @@ void Enemy::movement(float _deltaTime)
 				direction.x = 0;
 			}
 			
-			//if (m_CurrentAnimation->getName() != "ATTACK" && direction.x == 0.f) setAnimation("IDLE");
 			
 		}
 		else setAnimation("IDLE");
@@ -83,6 +93,7 @@ void Enemy::movement(float _deltaTime)
 	else {
 		if (m_CurrentAnimation->getCurrentFrame() != m_CurrentAnimation->getFrameCount()-1) {
 			setAnimation("DEATH");
+			
 		}
 		else m_CurrentAnimation->pause();
 	}
@@ -92,14 +103,16 @@ void Enemy::movement(float _deltaTime)
 void Enemy::update(float deltaTime, sf::RenderTarget* window)
 {
 	
+
+	
 	movement(deltaTime);
 	fallControll(deltaTime);
-
+	if(!isDead)m_Bar->render(window);
 }
 
 void Enemy::fallControll(float _deltaTime)
 {
-	platforms = m_GameManager->getPlatRects();
+	vector<PlatRects*> platforms = m_GameManager->getPlatRects();
 	float _displacement = m_JumpVelocity * _deltaTime + 0.5f * GRAVITY * _deltaTime * _deltaTime;
 	//m_isOnGround = false;
 	FloatRect _EnemyBounds = sprite->getGlobalBounds();

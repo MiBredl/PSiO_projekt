@@ -12,6 +12,13 @@ Animation::Animation(std::string _name,std::string _filename, sf::Vector2i _fram
 		
 }
 
+Animation::~Animation()
+{
+	delete texture;
+}
+
+
+
 void Animation::render(float deltaTime)
 {
 	m_iTotalTime += deltaTime;

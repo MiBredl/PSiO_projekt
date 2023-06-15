@@ -1,10 +1,6 @@
 #include "NPC.h"
 
 
-
-
-
-
 void NPC::render(sf::RenderTarget* window,float deltaTime)
 {
 
@@ -19,7 +15,7 @@ void NPC::render(sf::RenderTarget* window,float deltaTime)
 	if (m_AnimationTime) {
 		m_AnimationTime--;
 	}
-
+	if (isInvincible) sprite->setColor(Color::Green);
 	window->draw(*sprite);
 }
 
@@ -51,11 +47,14 @@ void NPC::addAnimation( Animation* _animation)
 void NPC::damageManager(float damage)
 {
 	isHit = false;
+	
 	if (!iFrameTime) {
 		
 		iFrameTime = 45;
-		
+		m_DamageTaken = damage;
 		m_HP -= damage;
+		if (m_HP < 0) m_HP = 0;
+		
 		isHit = true;
 		if (m_HP <= 0) {
 			isDead = true;

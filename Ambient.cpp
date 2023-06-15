@@ -73,6 +73,14 @@ Ambient::Ambient(GameManager* _gameManager, string _textname , Vector2f start_po
 
 }
 
+Ambient::~Ambient()
+{
+	for (auto& texture : m_Texture) {
+		delete texture.second;
+	}
+	m_Texture.clear();
+}
+
 void Ambient::updateParalax()
 {
 	float posX = m_GameManager->getPlayer()->getSprite()->getPosition().x;
@@ -92,7 +100,11 @@ void Ambient::updateDoor()
 		if(m_GameManager->getCurrentWorld()==1)
 		{
 			m_GameManager->setCurrentWorld(2);
-			cout << "XDDD\n";
+			m_GameManager->setRoomChange(true);
+			m_GameManager->getPlayer()->SetPos({ 800, 0 });
+			
+			m_GameManager->getMainMenu()->overrideChosen(GAME_ENUMS::GAMESTATE::RESTART);
+			
 		}
 		
 	}

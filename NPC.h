@@ -2,7 +2,6 @@
 #include"libraries.h"
 #include"AttackAnimation.h"
 
-
 class NPC
 {
 protected:
@@ -17,6 +16,7 @@ protected:
 	float m_outputDamage;
 	float m_HP;
 	float m_TotalTime;
+	int m_DamageTaken=0;
 	bool isFirstAttack = true;
 	bool isAttacking = false;
 	bool isHit = false;
@@ -25,6 +25,7 @@ protected:
 	bool m_isOnPlatform = false;
 	bool m_SideCollision = false;
 	bool hit = false;
+	bool isInvincible;
 	float m_JumpVelocity = 1;
 	bool m_IsFalling = false;
 	const float GRAVITY = 300.f;

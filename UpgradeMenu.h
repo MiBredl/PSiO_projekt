@@ -7,7 +7,7 @@ class UpgradeMenu : public Menu
 {
 private:
 	class GameManager& m_GameManager;
-	Font m_Font;
+	Font* m_Font;
 
 	enum UPGRADE_TEXT { EXP, OPTIONS, STRENGHT, HP };
 	enum BUTTONS { RED_STR, WHITE_STR, RED_HP, WHITE_HP, BACK, ACCEPT };
@@ -59,13 +59,13 @@ private:
 	/*vector<string> m_TextureActionPaths = { 
 	
 	};*/
-	FloatRect scrollBounds;
+	FloatRect* scrollBounds ;
 
 	void handleInput();
 	void buttonsUpdate();
 	void textSetUp();
 	void viewUpdateTexts();
-	void textUpdate();
+	
 	void scrollOpen();
 	void scrollCloed();
 	void handleInnerInput();
@@ -75,8 +75,9 @@ private:
 	Vector2f mapToCords(Vector2i);
 
 public:
-	UpgradeMenu(GameManager&);
 	
+	UpgradeMenu(GameManager&);
+	~UpgradeMenu();
 	
 	void render();
 };

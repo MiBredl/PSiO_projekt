@@ -61,7 +61,8 @@ void PlatRects::updatePlatRects()
 
 	if (isDissapear)
 	{
-		if (m_GameManager->getPlayer()->getSprite()->getGlobalBounds().intersects(fRect))
+		FloatRect pRect = m_GameManager->getPlayer()->getSprite()->getGlobalBounds();
+		if (pRect.left + pRect.width >= fRect.left && pRect.top + pRect.height >= fRect.top - 5 && pRect.left <= fRect.left + fRect.width)
 			disapearing = true;
 
 		if (disapearing)

@@ -11,7 +11,7 @@ GameManager::GameManager():m_CurrentState(GAME_ENUMS::GAMESTATE::PLAYING), m_Cur
 	
 	InitializeGame(m_CurrentWorld);
 
-	m_UpgradeMenu = new UpgradeMenu(*this);
+	
 	m_MainMenu = new MainMenu(*this);
 	update();
 }
@@ -21,9 +21,12 @@ void GameManager::update()
 
 	
 	while (m_Window->isOpen()) {
+		//cout << isRoomChange<<endl;
+		float deltaTime = getElapsedTime().asSeconds();
 		eventManager();
 		view.setCenter(m_Player->getSprite()->getPosition().x, WINDOW_HEIGHT / 2);
 		m_Window->clear();		
+		m_Player->jumpControl(deltaTime);
 		if (m_MainMenu != nullptr ) {
 			m_MainMenu->handleInput();
 			if (m_CurrentState == GAME_ENUMS::GAMESTATE::PAUSED) { 
@@ -32,19 +35,14 @@ void GameManager::update()
 			 
 		}
 		
-		if (m_CurrentState== GAME_ENUMS::GAMESTATE::RESTART) {
-			//cout << "RESTART\n";
-			RestartGame();
-			InitializeGame(m_CurrentWorld);
-			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
-		}
 		
-		if (m_CurrentState == GAME_ENUMS::GAMESTATE::PLAYING) {
+		
+		if (m_CurrentState == GAME_ENUMS::GAMESTATE::PLAYING || m_CurrentState==GAME_ENUMS::GAMESTATE::VICTORY) {
 			
 			m_Window->setView(view);
 			view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
 			
-			float deltaTime = getElapsedTime().asSeconds();
+			
 			for (Ambient* ambient : far_background)
 			{
 				ambient->renderPlat(m_Window);
@@ -77,11 +75,13 @@ void GameManager::update()
 			}
 			
 			if (m_Player != nullptr) m_Player->render(m_Window, deltaTime);
-			
-			for (const auto& enemy_ : enemies)
+			if(m_Boss!=nullptr)m_Boss->render(m_Window,deltaTime);
+
+			for ( auto& enemy_ : enemies)
 			{
-				enemy_->render(m_Window, deltaTime);
+				if(enemy_!=nullptr)enemy_->render(m_Window, deltaTime);
 			}
+			
 			UpdateMobs(deltaTime);
 			for (const auto& front_amb : f_ambients)
 			{
@@ -104,6 +104,18 @@ void GameManager::update()
 				}
 			}		
 			 if (m_UpgradeMenu != nullptr) m_UpgradeMenu->render();
+			 if (m_CurrentState == GAME_ENUMS::GAMESTATE::VICTORY) {
+				 m_VictoryScreen->render();
+				 m_VictoryScreen->handleInput();
+			 }
+		}
+		if (m_CurrentState == GAME_ENUMS::GAMESTATE::RESTART) {
+			//cout << "RESTART\n";
+			RestartGame();
+			InitializeGame(m_CurrentWorld);
+
+			m_MainMenu->overrideChosen(GAME_ENUMS::GAMESTATE::PLAYING);
+
 		}
 		if (m_CurrentState == GAME_ENUMS::GAMESTATE::DEAD) {
 			//cout << "dziala\n";			
@@ -134,12 +146,14 @@ void GameManager::UpdateMobs(float deltaTime)
 		{
 			enemy_->update(deltaTime, m_Window);
 		}
+		if(m_Boss!=nullptr)m_Boss->update(deltaTime);
 }
 void GameManager::InitializeGame(int i)
 {
 	m_Clock = new Clock;
-	m_Player = new Player(this);	
 	m_DeathMenu = new DeathMenu(*this);
+	m_VictoryScreen = new VictoryScreen(*this);
+	m_UpgradeMenu = new UpgradeMenu(*this);
 	switch (i)
 	{
 	case 1:
@@ -148,11 +162,11 @@ void GameManager::InitializeGame(int i)
 		break;
 	case 2:
 		loadWorld2();
-		worldGenE(0, enemies, world2);
+		m_Boss = new EnemyBoss(GAME_ENUMS::ENEMY_TYPE::BOSS, this, { 300,300 });
 		break;
 	}
-
-	
+	if (!isRoomChange) m_Player = new Player(this);
+	isRoomChange = false;
 }
 void GameManager::RestartGame()
 {
@@ -174,8 +188,11 @@ void GameManager::RestartGame()
 	for (auto& platform : platforms) {
 		delete platform;
 	}	
-	for (auto enemy : enemies) {
-		delete enemy;
+	if (enemies.size() > 0) {
+		for (auto enemy : enemies) {
+			delete enemy;
+		}
+		enemies.clear();
 	}
 	far_background.clear();
 	close_background.clear();
@@ -183,12 +200,15 @@ void GameManager::RestartGame()
 	f_ambients.clear();
 	platRects.clear();
 	platforms.clear();
-	enemies.clear();
-
+	delete m_VictoryScreen;
+	if (m_Boss != nullptr) { 
+		delete m_Boss; 
+		m_Boss = nullptr;
+	}
 	delete m_Clock;
-	delete m_Player;
+	if (!isRoomChange) delete m_Player;
 	delete m_DeathMenu;
-	
+	delete m_UpgradeMenu;
 }
 void GameManager::loadWorld1()
 {

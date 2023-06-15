@@ -32,6 +32,15 @@ Platform::Platform(GameManager* _gameMeneger, string _textname, Vector2f startin
 
 }
 
+Platform::~Platform()
+{
+	delete sprite;
+	for (auto& texture : m_Texture) {
+		delete texture.second;
+	}
+	m_Texture.clear();
+}
+
 void Platform::platformUpdate()
 {
 	if (this != nullptr)

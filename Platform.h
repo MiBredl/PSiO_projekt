@@ -25,6 +25,7 @@ public:
 
 	Platform(GameManager*, string, Vector2f, Vector2f);
 	Platform(GameManager*, string, Vector2f, Vector2f, bool, bool, bool);
+	~Platform();
 	void platformUpdate();
 	bool isDeadPlat();
 };

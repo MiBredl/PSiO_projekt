@@ -4,7 +4,9 @@
 
 UpgradeMenu::UpgradeMenu(GameManager& _GameManager) : m_GameManager(_GameManager)
 {
-	if (!m_Font.loadFromFile("Fonts/Roboto-BlackItalic.ttf")) {
+	m_Font=new Font;
+	scrollBounds = new FloatRect;
+	if (!m_Font->loadFromFile("Fonts/Roboto-BlackItalic.ttf")) {
 		cerr << "UpgradeMenu font loading error\n";
 	}
 	
@@ -29,7 +31,7 @@ UpgradeMenu::UpgradeMenu(GameManager& _GameManager) : m_GameManager(_GameManager
 
 	for (auto& text : bufferTexts) {
 		text.setCharacterSize(20);
-		text.setFont(m_Font);
+		text.setFont(*m_Font);
 		text.setFillColor(Color::Black);
 	}
 	for (int i = 0; i < arrowQuantity; i++) {
@@ -48,6 +50,12 @@ UpgradeMenu::UpgradeMenu(GameManager& _GameManager) : m_GameManager(_GameManager
 	m_ButtonSprites[4].setScale(0.2,0.2);
 	m_ButtonSprites[5].setTexture(m_ButtonTextures[3]);
 	m_ButtonSprites[5].setScale(0.2,0.2);
+}
+
+UpgradeMenu::~UpgradeMenu()
+{
+	delete scrollBounds;
+	delete m_Font;
 }
 
 void UpgradeMenu::handleInput()
@@ -99,7 +107,7 @@ void UpgradeMenu::textSetUp()
 	
 	for (int i = 0; i < m_UpgradeTexts.size();i++) {
 		m_UpgradeTexts[i].setString(m_UpgradeStrings[i]);
-		m_UpgradeTexts[i].setFont(m_Font);
+		m_UpgradeTexts[i].setFont(*m_Font);
 		m_UpgradeTexts[i].setFillColor(Color::Black);
 	}
 
@@ -117,8 +125,8 @@ void UpgradeMenu::viewUpdateTexts()
 	
 	Vector2f Str_textPos = { m_ButtonSprites[BUTTONS::RED_STR].getPosition().x-150, m_ButtonSprites[BUTTONS::RED_STR].getPosition().y-10 };
 	Vector2f HP_textPos = { m_ButtonSprites[BUTTONS::RED_HP].getPosition().x-150, m_ButtonSprites[BUTTONS::RED_HP].getPosition().y-10 };
-	Vector2f optionsTextPos = { scrollBounds.left + scrollBounds.width / 2.0f - optionsTextBounds.width / 2.0f, scrollBounds.top + 180.0f };
-	Vector2f EXPTextPos = { scrollBounds.left + 120.0f, optionsTextPos.y + optionsTextBounds.height + 30.0f };
+	Vector2f optionsTextPos = { scrollBounds->left + scrollBounds->width / 2.0f - optionsTextBounds.width / 2.0f, scrollBounds->top + 180.0f };
+	Vector2f EXPTextPos = { scrollBounds->left + 120.0f, optionsTextPos.y + optionsTextBounds.height + 30.0f };
 	
 
 	m_UpgradeTexts[UPGRADE_TEXT::STRENGHT].setPosition(Str_textPos);
@@ -220,7 +228,7 @@ void UpgradeMenu::handleInnerInput()
 
 void UpgradeMenu::update()
 {
-	scrollBounds = m_Scroll->getGlobalBounds();
+	*scrollBounds = m_Scroll->getGlobalBounds();
 	string ExpUpdateStr = m_UpgradeStrings[UPGRADE_TEXT::EXP] + std::to_string(m_GameManager.getPlayer()->m_Exp);
 	m_UpgradeTexts[UPGRADE_TEXT::EXP].setString(ExpUpdateStr);
 	

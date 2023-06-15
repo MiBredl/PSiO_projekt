@@ -9,7 +9,7 @@ class Player : public NPC
 {
 public:
 	Player(GameManager*);
-	
+	~Player();
 	void viewupdate();
 	void jumpControl(float);
 	void movement(float);
@@ -17,19 +17,26 @@ public:
 	float getHP(){
 		return m_HP;
 	}
-	
+	void SetPos(Vector2f _pos) {
+		this->sprite->setPosition(_pos);
+	}
+	bool getIsAirborne() {
+		return (m_IsJumping || m_IsFalling);
+	}
 	void update(float, sf::RenderTarget*);
 	void HealthBarManager();
-	
+	void setSafety(bool _state){
+		jumpSafe = _state;
+	}
 private:
 	
-	void collider();
+	
 	void experienceUpdate();
 	vector<HealthBar*> m_HealthPoints;
-	vector<PlatRects*> platforms;
-	void loadAnimations();
-
 	
+	void loadAnimations();
+	
+	bool jumpSafe = false;
 	bool bounced = false;
 	bool m_IsJumping = false;
 	

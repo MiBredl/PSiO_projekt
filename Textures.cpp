@@ -11,3 +11,8 @@ Textures::Textures(string _name,string directory, IntRect rect):
 	//cout << "xD\n";
 
 }
+
+Textures::~Textures()
+{
+	delete texture;
+}

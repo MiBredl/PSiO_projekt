@@ -9,6 +9,7 @@ private:
 	string name;
 public:
 	Textures(string,string, IntRect);
+	~Textures();
 	Texture* getTexture() {
 		return texture;
 	}

@@ -2,12 +2,20 @@
 
 HealthBar::HealthBar()
 {
-	texture.loadFromFile("textures/player/Heart.png");
-	sprite.setTexture(texture);
+	texture = new Texture;
+	sprite = new Sprite;
+	texture->loadFromFile("textures/player/Heart.png");
+	sprite->setTexture(*texture);
 	
+}
+
+HealthBar::~HealthBar()
+{
+	delete texture;
+	delete sprite;
 }
 
 void HealthBar::render(RenderWindow* _window)
 {
-	_window->draw(sprite);
+	if(sprite!=nullptr)_window->draw(*sprite);
 }

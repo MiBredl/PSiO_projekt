@@ -29,11 +29,26 @@ Player::Player(GameManager* _gameManager) : playerSpeed(5)
 	}
 	
 }
+Player::~Player()
+{
+	delete sprite;
+	
+	for (auto& pair : m_Animations) {
+		delete pair.second;
+	}
+	m_Animations.clear();
+	for (auto& hp : m_HealthPoints) {
+		delete hp;
+	}
+	m_HealthPoints.clear();
+	
+	
+}
 void Player::viewupdate()
 {
 	
 
-	for (int i = 0; i < m_HP; i++) {
+	for (int i = 0; i < m_HealthPoints.size(); i++) {
 		sf::Vector2i pixelPos(i * 25, 0);
 		sf::Vector2f worldPos = m_GameManager->getWindow()->mapPixelToCoords(pixelPos);
 		m_HealthPoints[i]->setPosition(worldPos);
@@ -43,7 +58,7 @@ void Player::viewupdate()
 
 void Player::jumpControl(float deltaTime)
 {
-	platforms = m_GameManager->getPlatRects();
+	vector<PlatRects*> platforms = m_GameManager->getPlatRects();
 	float _displacement = m_JumpVelocity*deltaTime+0.5f*GRAVITY*deltaTime*deltaTime;
 	m_isOnGround = false;
 	
@@ -61,14 +76,14 @@ void Player::jumpControl(float deltaTime)
 		if (_displacement > 0) m_IsFalling = true;
 		m_JumpVelocity += GRAVITY * deltaTime;
 		//std::cout << _displacement << std::endl;
-		
-		sprite->move(0.f,_displacement);
+
+		sprite->move(0.f, _displacement);
 
 		if (_displacement < 0.f && (m_isOnGround || m_isOnPlatform)) m_JumpVelocity = 0.f;
 
 	}
 	if (m_IsFalling) {
-		if (sprite->getPosition().y >= WINDOW_HEIGHT-sprite->getGlobalBounds().height) {
+		if (sprite->getPosition().y >= WINDOW_HEIGHT - sprite->getGlobalBounds().height) {
 			m_JumpVelocity = 0.f;
 			m_IsFalling = false;
 			m_IsJumping = false;
@@ -76,7 +91,7 @@ void Player::jumpControl(float deltaTime)
 			m_HP = 0;
 			isDead = true;
 		}
-		
+
 
 	}
 	else if (!m_IsJumping && !m_IsFalling) {
@@ -86,12 +101,12 @@ void Player::jumpControl(float deltaTime)
 	}
 	if ((!m_isOnPlatform || !m_isOnGround) && _displacement > 0.f) {
 		m_IsFalling = true;
-	
+
 	}
 	for (auto& platform : platforms) {
 		FloatRect _PlatformHitbox = platform->getRect();
 
-		
+
 		if (_nextBounds.intersects(_PlatformHitbox)) {
 
 
@@ -123,37 +138,37 @@ void Player::jumpControl(float deltaTime)
 				&& _nextBounds.left + _nextBounds.width <= _PlatformHitbox.left + _PlatformHitbox.width)
 				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
 					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top) && m_CurrentAnimation->getName() != "ATTACK") {
-				
 
-				sprite->setPosition(_PlatformHitbox.left - _PlayerHitbox.width, _PlayerHitbox.top+_displacement);
+
+				sprite->setPosition(_PlatformHitbox.left - _PlayerHitbox.width, _PlayerHitbox.top + _displacement);
 
 				//m_SideCollision = true;
-				
+
 			}
 			else if ((_nextBounds.left > _PlatformHitbox.left
 				&& _nextBounds.left + _nextBounds.width >= _PlatformHitbox.left + _PlatformHitbox.width)
 				&& (_nextBounds.top< _PlatformHitbox.top + _PlatformHitbox.height
-					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top ) && m_CurrentAnimation->getName() != "ATTACK") {
-				
-				sprite->setPosition(_PlatformHitbox.left + _PlatformHitbox.width+_PlayerHitbox.width/2, _PlayerHitbox.top+_displacement);
+					&& _nextBounds.top + _nextBounds.height>_PlatformHitbox.top) && m_CurrentAnimation->getName() != "ATTACK") {
+
+				sprite->setPosition(_PlatformHitbox.left + _PlatformHitbox.width + _PlayerHitbox.width / 2, _PlayerHitbox.top + _displacement);
 				//m_SideCollision = true;
-				
+
 
 			}
-			
+
 		}
-		else platform->isActive=false;
-			
+		else platform->isActive = false;
+
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)&&!isDead&&(!m_IsFalling||!m_IsJumping)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && !isDead && (!m_IsFalling || !m_IsJumping)) {
 		if (!m_IsJumping && !m_IsFalling) {
 			m_IsJumping = true;
 			m_JumpVelocity = JUMP_VELOCITY;
 		}
 
 	}
-
 }
+
 
 
 void Player::movement(float _deltaTime)
@@ -202,6 +217,23 @@ void Player::movement(float _deltaTime)
 									//std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
 									if (frame == attackAnimation->getCurrentFrame()) {
 										enemy->damageManager(m_outputDamage);
+										break;
+									}
+
+								}
+							}
+						}
+						
+					}
+					if (m_GameManager->getBoss() != nullptr) {
+						if (sprite->getGlobalBounds().intersects(m_GameManager->getBoss()->getGlobalBound())) {
+							AttackAnimation* attackAnimation = dynamic_cast<AttackAnimation*>(getAnimation());
+							if (attackAnimation != nullptr) {
+								for (int frame : attackAnimation->getHitboxes()) {
+									//std::cout << frame << " " << attackAnimation->getCurrentFrame() << std::endl;
+									if (frame == attackAnimation->getCurrentFrame()) {
+											if(!m_GameManager->getBoss()->getIsInvincible())m_GameManager->getBoss()->damageManager(m_outputDamage);
+										
 										break;
 									}
 
@@ -261,11 +293,11 @@ void Player::loadAnimations()
 
 void Player::update(float deltaTime, sf::RenderTarget* window)
 {
-	//PlatformDetection();
+	
 	experienceUpdate();
 	HealthBarManager();
 	viewupdate();
-	jumpControl(deltaTime);
+	
 	movement(deltaTime);
 }
 
@@ -274,7 +306,9 @@ void Player::HealthBarManager()
 	
 	if (m_HealthPoints.size() > 0) {
 		if (isHit) {
-			m_HealthPoints.pop_back();
+			if (m_DamageTaken <= m_HealthPoints.size())for (int i = 0; i < m_DamageTaken; i++)m_HealthPoints.pop_back();
+			else for (int i = 0; i < m_HealthPoints.size(); i++) m_HealthPoints.pop_back();
+			m_DamageTaken = 0;
 		}
 		for (auto& hp : m_HealthPoints) {
 			hp->render(m_GameManager->getWindow());
