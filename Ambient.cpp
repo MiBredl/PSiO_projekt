@@ -101,7 +101,7 @@ void Ambient::updateDoor()
 		{
 			m_GameManager->setCurrentWorld(2);
 			m_GameManager->setRoomChange(true);
-			m_GameManager->getPlayer()->SetPos({ 800, 0 });
+			m_GameManager->getPlayer()->SetPos({ 800, -200 });
 			
 			m_GameManager->getMainMenu()->overrideChosen(GAME_ENUMS::GAMESTATE::RESTART);
 			
