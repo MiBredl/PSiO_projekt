@@ -4,6 +4,7 @@ They are used solely for educational purposes, and the creator of this program d
 They are used in accordance with the terms of use specified by the original source.
 
 LINKS:
+Boss: https://luizmelo.itch.io/evil-wizard
 Knight textures: https://aamatniekss.itch.io/fantasy-knight-free-pixelart-animated-character
 Monsters Creatures Fantasy: https://luizmelo.itch.io/monsters-creatures-fantasy
 Menu Buttons: https://nectanebo.itch.io/menu-buttons?download
